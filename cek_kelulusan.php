@@ -24,6 +24,9 @@ $settings = $settings ?? [];
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="shortcut icon" href="assets/images/<?= $settings['logo'] ?? 'default-logo.png' ?>" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/kelulusan.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -44,7 +47,7 @@ $settings = $settings ?? [];
                         <h3>Pengumuman kelulusan belum dimulai</h3>
                         <p>Silakan coba lagi setelah tanggal
                             <?= date('d F Y H:i', strtotime($settings['tanggal_kelulusan'] ?? '')) ?></p>
-                        <a href="index.php" class="btn-back">Kembali ke Beranda</a>
+                        <a href="/" class="btn-back">Kembali ke Beranda</a>
                     </div>
                 <?php elseif (isset($siswa) && $siswa): ?>
                     <div id="index-accepted" class="index-accepted">
@@ -101,7 +104,9 @@ $settings = $settings ?? [];
                                 sekolah. Selamat atas kelulusan Anda!</p>
                             <p class="index-accepted-footer-paragraph">Untuk informasi lebih lanjut mengenai kegiatan wisuda
                                 dan lainnya, silakan tunggu info selanjutnya.</p>
-                            <a href="/" class="btn-back">Kembali ke Beranda</a>
+                            <a href="/" class="index-form-content-footer-submit" style="color: #3b82f6; text-decoration: none; border: none; display: block; margin-top: 20px; background: none; padding: 0;">
+                                Kembali ke Beranda
+                            </a>
                         </div>
                     </div>
                 <?php else: ?>

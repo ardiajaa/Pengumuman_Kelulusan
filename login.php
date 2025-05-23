@@ -1,5 +1,7 @@
 <?php
 require_once 'config/auth.php';
+require_once 'config/database.php';
+require_once 'includes/functions.php';
 
 if (isLoggedIn()) {
     header("Location: admin/dashboard.php");
@@ -18,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Email atau password salah!';
     }
 }
+
+// Ambil pengaturan untuk header
+$settings = getSettings($conn);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -25,7 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Bank Sampah</title>
+    <title>Login Admin Pengumuman Kelulusan <?= htmlspecialchars($settings['nama_sekolah']) ?>
+        <?= htmlspecialchars($settings['tahun_kelulusan']) ?>
+    </title>
+    <link rel="icon" href="assets/images/<?= $settings['logo'] ?>">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -99,21 +107,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="p-8">
             <div class="text-center mb-8">
                 <?php
-                // Pastikan path yang benar ke file database.php
-                require_once __DIR__ . '/config/database.php';
-                require_once __DIR__ . '/includes/functions.php';
-
-                // Cek apakah koneksi database berhasil
-                if ($conn) {
-                    $settings = getSettings($conn);
-                    if ($settings && !empty($settings['logo'])) {
-                        $logoPath = 'assets/images/' . $settings['logo'];
-                        if (file_exists($logoPath)) {
-                            echo '<img src="' . $logoPath . '" alt="Logo Sekolah" 
-                                  class="w-32 h-32 mx-auto mb-8 animate__animated animate__bounceIn object-contain">';
-                        } else {
-                            echo '<i class="fas fa-school text-blue-600 text-8xl mx-auto mb-8 animate__animated animate__bounceIn"></i>';
-                        }
+                if ($settings && !empty($settings['logo'])) {
+                    $logoPath = 'assets/images/' . $settings['logo'];
+                    if (file_exists($logoPath)) {
+                        echo '<img src="' . $logoPath . '" alt="Logo Sekolah" 
+                              class="w-32 h-32 mx-auto mb-8 animate__animated animate__bounceIn object-contain">';
                     } else {
                         echo '<i class="fas fa-school text-blue-600 text-8xl mx-auto mb-8 animate__animated animate__bounceIn"></i>';
                     }
@@ -121,12 +119,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo '<i class="fas fa-school text-blue-600 text-8xl mx-auto mb-8 animate__animated animate__bounceIn"></i>';
                 }
                 ?>
-                <h1 class="text-4xl font-bold text-gray-800 mb-2 animate__animated animate__fadeIn">Login Admin</h1>
+                <h1 class="text-4xl font-bold text-gray-800 mb-2 animate__animated animate__fadeIn">Login Admin
+                    <?= htmlspecialchars($settings['nama_sekolah']) ?>
+                    <?= htmlspecialchars($settings['tahun_kelulusan']) ?></h1>
                 <p class="text-gray-600 text-lg animate__animated animate__fadeIn">Silahkan Masuk Disini!</p>
             </div>
 
             <?php if ($error): ?>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 animate__animated animate__shakeX">
+                <div
+                    class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 animate__animated animate__shakeX">
                     <i class="fas fa-exclamation-circle mr-2"></i><?= $error ?>
                 </div>
             <?php endif; ?>
@@ -135,7 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-4">
                     <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
                     <div class="relative">
-                        <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <i
+                            class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
                         <input type="email" id="email" name="email" required
                             class="input-field w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 relative"
                             placeholder="contoh@email.com">
@@ -144,7 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-6">
                     <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
                     <div class="relative">
-                        <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
+                        <i
+                            class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
                         <input type="password" id="password" name="password" required
                             class="input-field w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 relative"
                             placeholder="••••••••">
@@ -171,17 +174,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="mt-8 text-center">
-                <?php
-                // Include file database untuk koneksi
-                require_once __DIR__ . '/config/database.php';
-
-                // Query untuk mendapatkan settings
-                $sql = "SELECT * FROM settings WHERE id = 1";
-                $result = mysqli_query($conn, $sql);
-                $settings = mysqli_fetch_assoc($result);
-                ?>
                 <p class="text-gray-600 text-sm">
-                    &copy; <?= date('Y') ?> <?= isset($settings['nama_sekolah']) ? $settings['nama_sekolah'] : 'Nama Sekolah' ?>. All rights reserved.
+                    &copy; <?= date('Y') ?>
+                    <?= isset($settings['nama_sekolah']) ? $settings['nama_sekolah'] : 'Nama Sekolah' ?>. All rights
+                    reserved.
                 </p>
             </div>
         </div>

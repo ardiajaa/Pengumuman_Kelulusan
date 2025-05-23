@@ -4,15 +4,9 @@ require_once 'includes/functions.php';
 
 $settings = getSettings($conn);
 $tanggalKelulusan = $settings['tanggal_kelulusan'];
-$timeLeft = getTimeLeft($tanggalKelulusan); // Pastikan fungsi ini mengembalikan detik tersisa
+$timeLeft = getTimeLeft($tanggalKelulusan);
 
-// Konversi ke format ISO untuk JavaScript
 $graduationDateISO = date('c', strtotime($tanggalKelulusan));
-
-// Debug: Tampilkan informasi waktu
-// echo "Waktu Server: " . date('Y-m-d H:i:s') . "<br>";
-// echo "Waktu Kelulusan: " . $tanggalKelulusan . "<br>";
-// echo "Selisih Detik: " . $timeLeft . "<br>";
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -24,7 +18,8 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pengumuman Kelulusan <?= htmlspecialchars($settings['nama_sekolah']) ?>
-        <?= htmlspecialchars($settings['tahun_kelulusan']) ?></title>
+        <?= htmlspecialchars($settings['tahun_kelulusan']) ?>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -45,7 +40,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         body {
             width: 100%;
             min-height: 100vh;
-            /* Use min-height for better responsiveness */
             margin: 0;
             padding: 0;
             background-color: #0e0e0e;
@@ -53,7 +47,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             background-position: center center;
             background-attachment: fixed;
             display: flex;
-            /* Use flexbox for centering */
             justify-content: center;
             align-items: center;
         }
@@ -61,19 +54,16 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         .main {
             width: 100%;
             min-height: 100vh;
-            /* Use min-height */
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            /* Add padding for smaller screens */
         }
 
         .main-background {
             width: 100%;
             height: 100%;
             position: fixed;
-            /* Use fixed to cover the whole viewport */
             top: 0;
             left: 0;
             z-index: 1;
@@ -90,7 +80,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             z-index: 10;
             width: 100%;
             max-width: 900px;
-            /* Limit max width */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -105,19 +94,14 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             width: 100%;
         }
 
-        /* Countdown Timer Styles */
         .index-timer {
             width: 100%;
             display: flex;
             flex-direction: column;
             border-radius: 10px;
-            /* Added border-radius */
             overflow: hidden;
-            /* Ensure children respect border-radius */
             background-color: rgba(0, 0, 0, 0.5);
-            /* Added background */
             backdrop-filter: blur(10px);
-            /* Added blur */
         }
 
         @media (min-width: 900px) {
@@ -131,12 +115,10 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             display: flex;
             flex-direction: row;
             justify-content: space-around;
-            /* Changed to space-around */
             align-items: flex-end;
             padding: 20px;
             background-image: linear-gradient(90deg, #0f4174, #006cbf);
             flex-wrap: wrap;
-            /* Allow wrapping on small screens */
         }
 
         @media (min-width: 600px) {
@@ -150,7 +132,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             flex-direction: column;
             align-items: center;
             margin: 5px;
-            /* Added margin */
         }
 
         .index-timer-timer-cell-caption {
@@ -211,7 +192,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             font-weight: 900;
             color: #fff;
             margin: 0 5px;
-            /* Added margin */
         }
 
         @media (min-width: 360px) {
@@ -1025,8 +1005,10 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
-            z-index: 9999; /* Ensure it's on top */
+            background-color: rgba(0, 0, 0, 0.8);
+            /* Semi-transparent dark background */
+            z-index: 9999;
+            /* Ensure it's on top */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1034,9 +1016,12 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             color: #fff;
             font-size: 1.5rem;
             text-align: center;
-            opacity: 0; /* Start hidden */
-            visibility: hidden; /* Start hidden */
-            transition: opacity 0.5s ease, visibility 0.5s ease; /* Smooth transition */
+            opacity: 0;
+            /* Start hidden */
+            visibility: hidden;
+            /* Start hidden */
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            /* Smooth transition */
         }
 
         #loading-screen.visible {
@@ -1045,15 +1030,23 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         }
 
         #loading-screen i {
-            font-size: 3rem; /* Size of the spinner icon */
+            font-size: 3rem;
+            /* Size of the spinner icon */
             margin-bottom: 20px;
-            color: #88ccf0; /* Color matching the theme */
-            animation: spin 1.5s linear infinite; /* Add spin animation */
+            color: #88ccf0;
+            /* Color matching the theme */
+            animation: spin 1.5s linear infinite;
+            /* Add spin animation */
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         #loading-screen p {
@@ -1083,6 +1076,7 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         }
     </style>
 </head>
+
 <body id="body"
     style="background-image: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
     <div id="main" class="main">
@@ -1224,7 +1218,7 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             const loadingScreen = document.getElementById('loading-screen');
 
             if (graduationForm && loadingScreen) {
-                graduationForm.addEventListener('submit', function(event) {
+                graduationForm.addEventListener('submit', function (event) {
                     // Prevent default form submission
                     event.preventDefault();
 
@@ -1235,7 +1229,7 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                     const form = this;
 
                     // Submit the form after a 5-second delay
-                    setTimeout(function() {
+                    setTimeout(function () {
                         form.submit();
                     }, 5000); // Delay in milliseconds (5000ms = 5 seconds)
                 });
