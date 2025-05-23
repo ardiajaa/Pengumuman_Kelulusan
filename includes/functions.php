@@ -1,5 +1,6 @@
 <?php
-function getSettings($conn) {
+function getSettings($conn)
+{
     $result = mysqli_query($conn, "SELECT * FROM settings LIMIT 1");
     if (!$result || mysqli_num_rows($result) == 0) {
         // Return default settings if none found
@@ -13,52 +14,89 @@ function getSettings($conn) {
     return mysqli_fetch_assoc($result);
 }
 
-function getSiswaByNISN($conn, $nisn) {
+function getSiswaByNISN($conn, $nisn)
+{
     $sql = "SELECT * FROM siswa WHERE nisn = '$nisn' LIMIT 1";
     $result = mysqli_query($conn, $sql);
     return mysqli_fetch_assoc($result);
 }
 
-function getTimeLeft($targetDate) {
-    // Pastikan timezone Jakarta
+function getTimeLeft($targetDate)
+{
+    // Set timezone ke Asia/Jakarta
     date_default_timezone_set('Asia/Jakarta');
     
-    // Tanggal sekarang
     $now = time();
-    
-    // Parse tanggal target
     $target = strtotime($targetDate);
     
-    // Jika format tanggal salah
     if ($target === false) {
-        return ['is_passed' => true];
+        return 0; // Jika format tanggal salah, anggap sudah waktunya
     }
     
-    // Hitung selisih (dalam detik)
     $diff = $target - $now;
     
-    // Jika sudah lewat
-    if ($diff <= 0) {
-        return ['is_passed' => true];
-    }
-    
-    // Hitung komponen waktu
-    $days = floor($diff / (60 * 60 * 24));
-    $hours = floor(($diff % (60 * 60 * 24)) / (60 * 60));
-    $minutes = floor(($diff % (60 * 60)) / 60);
-    $seconds = floor($diff % 60);
-    
-    return [
-        'is_passed' => false,
-        'days' => $days,
-        'hours' => $hours,
-        'minutes' => $minutes,
-        'seconds' => $seconds,
-        'total_seconds' => $diff
-    ];
+    // Kembalikan 0 jika waktu sudah lewat
+    return $diff > 0 ? $diff : 0;
 }
 
-function sanitizeInput($data) {
+function sanitizeInput($data)
+{
     return htmlspecialchars(stripslashes(trim($data)));
 }
-?>
+
+function validateImage($file)
+{
+    // Cek apakah file adalah gambar
+    $check = getimagesize($file["tmp_name"]);
+    if ($check === false) {
+        return ["error" => "File bukan gambar"];
+    }
+
+    // Cek ukuran file (maks 5MB)
+    if ($file["size"] > 5242880) {
+        return ["error" => "Ukuran file terlalu besar (maks 5MB)"];
+    }
+
+    // Cek ekstensi file
+    $validExtensions = ['jpg', 'jpeg', 'png'];
+    $fileExtension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+    if (!in_array($fileExtension, $validExtensions)) {
+        return ["error" => "Hanya format JPG, JPEG, PNG yang diizinkan"];
+    }
+
+    return ["success" => true];
+}
+
+function validateStudentData($data)
+{
+    $errors = [];
+
+    if (empty($data['nisn'])) {
+        $errors[] = "NISN tidak boleh kosong";
+    }
+
+    if (empty($data['nama'])) {
+        $errors[] = "Nama tidak boleh kosong";
+    }
+
+    if (empty($data['kelas'])) {
+        $errors[] = "Kelas tidak boleh kosong";
+    }
+
+    // Check if 'absen' key exists before checking if it's numeric
+    if (!isset($data['absen']) || !is_numeric($data['absen'])) {
+        $errors[] = "Absen harus angka";
+    }
+
+    // Check if 'tanggal_lahir' key exists before checking date format
+    if (!empty($data['tanggal_lahir']) && !strtotime($data['tanggal_lahir'])) {
+        $errors[] = "Format tanggal tidak valid";
+    }
+
+    // Check if 'status' key exists before checking its value
+    if (!isset($data['status']) || !in_array(strtolower($data['status']), ['lulus', 'tidak lulus'])) {
+        $errors[] = "Status harus 'Lulus' atau 'Tidak Lulus'";
+    }
+
+    return $errors;
+}

@@ -1,3 +1,4 @@
-﻿12;Ardi;XII TKJ 1;1;Lulus
-123;Ardi;XII TKJ 1;2;Lulus
-456;Achmad;XII TKI 1;1;Tidak Lulus
+﻿NISN,Nama,Kelas,Absen,Tanggal_Lahir,Status,Foto_Referensi
+11928/1210.066,Ardi,XII TKJ 1,1,2005-05-15,Lulus,1.jpg
+11928/1210.067,Ardianto,XII TKJ 1,2,2005-08-22,Tidak Lulus,2.jpg
+11928/1210.068,Rizky,XII TKJ 1,3,2005-03-10,Lulus,3.jpg

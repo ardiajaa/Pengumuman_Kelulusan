@@ -4,128 +4,118 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
 redirectIfNotLoggedIn();
 
-// Aktifkan error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-$importResult = null;
-$importErrors = [];
-$showSuccessAlert = false;
+// Set folder upload
+$uploadDir = __DIR__ . '/../assets/uploads/siswa/';
+if (!file_exists($uploadDir)) {
+    mkdir($uploadDir, 0777, true);
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
-    // Validasi file
-    if ($_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
-        $importErrors[] = "Error upload file. Kode error: " . $_FILES['csv_file']['error'];
-    } else {
-        $file = $_FILES['csv_file']['tmp_name'];
+    // Proses file CSV
+    $csvFile = $_FILES['csv_file']['tmp_name'];
+    
+    // Baca file CSV
+    $csvData = [];
+    if (($handle = fopen($csvFile, "r")) !== FALSE) {
+        // Skip header jika ada
+        $header = fgetcsv($handle, 1000, ",");
         
-        // Fungsi untuk membaca CSV dengan berbagai delimiter
-        function parseCSV($file) {
-            $csvData = [];
-            
-            // Baca file untuk deteksi delimiter
-            $firstLine = file_get_contents($file, false, null, 0, 1000);
-            $delimiter = strpos($firstLine, ';') !== false ? ';' : ',';
-            
-            // Hapus BOM jika ada
-            $bom = pack('H*','EFBBBF');
-            $firstLine = preg_replace("/^$bom/", '', $firstLine);
-            
-            // Buka file
-            if (($handle = fopen($file, "r")) !== FALSE) {
-                while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
-                    // Skip baris kosong
-                    if (count(array_filter($data, 'strlen')) > 0) {
-                        // Hapus BOM dari kolom pertama jika ada
-                        if (isset($data[0])) {
-                            $data[0] = preg_replace("/^$bom/", '', $data[0]);
-                        }
-                        $csvData[] = $data;
-                    }
-                }
-                fclose($handle);
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            // Skip baris kosong
+            if (count(array_filter($data)) > 0) {
+                $csvData[] = $data;
             }
-            return $csvData;
         }
+        fclose($handle);
+    }
 
-        $csvData = parseCSV($file);
-        
-        if (empty($csvData)) {
-            $importErrors[] = "File CSV kosong atau format tidak valid";
-        } else {
-            // Siapkan laporan import
-            $successCount = 0;
-            $errorCount = 0;
-            $errors = [];
-
-            foreach ($csvData as $i => $row) {
-                // Skip header jika ada
-                if ($i === 0 && (strtolower($row[0]) === 'nisn' || strtolower($row[0]) === 'nisn')) {
-                    continue;
-                }
-
-                // Pastikan jumlah kolom cukup
-                if (count($row) < 5) {
-                    $errors[] = "Baris " . ($i+1) . ": Format data tidak lengkap";
-                    $errorCount++;
-                    continue;
-                }
-
-                // Ambil data
-                $nisn = trim($row[0]);
-                $nama = trim($row[1]);
-                $kelas = trim($row[2]);
-                $absen = (int)trim($row[3]);
-                $status = isset($row[4]) ? trim($row[4]) : 'Lulus';
-
-                // Validasi NISN
-                if (empty($nisn)) {
-                    $errors[] = "Baris " . ($i+1) . ": NISN tidak boleh kosong";
-                    $errorCount++;
-                    continue;
-                }
-
-                // Validasi panjang NISN
-                if (strlen($nisn) > 20) {
-                    $errors[] = "Baris " . ($i+1) . ": NISN terlalu panjang (max 20 karakter)";
-                    $errorCount++;
-                    continue;
-                }
-
-                // Normalisasi status
-                $status = in_array(strtolower($status), ['lulus', 'tidak lulus']) ? 
-                         ucfirst(strtolower($status)) : 'Lulus';
-
-                // Query untuk insert/update data
-                $query = "INSERT INTO siswa (nisn, nama, kelas, absen, status) 
-                         VALUES ('" . mysqli_real_escape_string($conn, $nisn) . "', 
-                                '" . mysqli_real_escape_string($conn, $nama) . "', 
-                                '" . mysqli_real_escape_string($conn, $kelas) . "', 
-                                $absen, 
-                                '" . mysqli_real_escape_string($conn, $status) . "')
-                         ON DUPLICATE KEY UPDATE 
-                         nama=VALUES(nama), kelas=VALUES(kelas), 
-                         absen=VALUES(absen), status=VALUES(status)";
-
-                if (mysqli_query($conn, $query)) {
-                    $successCount++;
-                } else {
-                    $errorCount++;
-                    $errors[] = "Baris " . ($i+1) . ": " . mysqli_error($conn);
+    // Proses file foto
+    $uploadedPhotos = [];
+    if (isset($_FILES['photos'])) {
+        foreach ($_FILES['photos']['tmp_name'] as $index => $tmpName) {
+            if ($_FILES['photos']['error'][$index] === UPLOAD_ERR_OK) {
+                $originalName = $_FILES['photos']['name'][$index];
+                $fileExt = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                $newFilename = uniqid() . '.' . $fileExt;
+                $targetPath = $uploadDir . $newFilename;
+                
+                // Validasi file
+                $check = getimagesize($tmpName);
+                if ($check !== false && move_uploaded_file($tmpName, $targetPath)) {
+                    $uploadedPhotos[$originalName] = 'siswa/' . $newFilename;
                 }
             }
-
-            if ($successCount > 0) {
-                $showSuccessAlert = true;
-            }
-
-            $importResult = [
-                'success' => $successCount,
-                'errors' => $errorCount,
-                'details' => $errors
-            ];
         }
     }
+
+    // Proses data siswa
+    $successCount = 0;
+    $errorCount = 0;
+    $errors = [];
+    
+    foreach ($csvData as $row) {
+        try {
+            // Pastikan jumlah kolom cukup
+            if (count($row) < 6) {
+                throw new Exception("Format baris tidak valid");
+            }
+            
+            $nisn = trim($row[0]);
+            $nama = trim($row[1]);
+            $kelas = trim($row[2]);
+            $absen = (int)trim($row[3]);
+            $tanggalLahir = !empty(trim($row[4])) ? trim($row[4]) : null;
+            $status = in_array(strtolower(trim($row[5])), ['lulus', 'tidak lulus']) ? 
+                      ucfirst(strtolower(trim($row[5]))) : 'Lulus';
+            $fotoRef = isset($row[6]) ? trim($row[6]) : '';
+            
+            // Validasi data penting
+            if (empty($nisn)) {
+                throw new Exception("NISN tidak boleh kosong");
+            }
+            
+            // Handle foto
+            $fotoPath = null;
+            if (!empty($fotoRef)) {
+                if (isset($uploadedPhotos[$fotoRef])) {
+                    $fotoPath = $uploadedPhotos[$fotoRef];
+                } else {
+                    throw new Exception("File foto '$fotoRef' tidak ditemukan");
+                }
+            }
+            
+            // Simpan ke database
+            $stmt = $conn->prepare("INSERT INTO siswa 
+                                  (nisn, nama, kelas, absen, tanggal_lahir, status, foto) 
+                                  VALUES (?, ?, ?, ?, ?, ?, ?)
+                                  ON DUPLICATE KEY UPDATE
+                                  nama=VALUES(nama), kelas=VALUES(kelas),
+                                  absen=VALUES(absen), tanggal_lahir=VALUES(tanggal_lahir),
+                                  status=VALUES(status), foto=VALUES(foto)");
+            $stmt->bind_param("sssisss", 
+                $nisn, $nama, $kelas, $absen, $tanggalLahir, $status, $fotoPath);
+            
+            if (!$stmt->execute()) {
+                throw new Exception(mysqli_error($conn));
+            }
+            
+            $successCount++;
+            $stmt->close();
+        } catch (Exception $e) {
+            $errorCount++;
+            $errors[] = "Baris " . ($successCount + $errorCount + 1) . ": " . $e->getMessage();
+        }
+    }
+    
+    // Simpan hasil import
+    $_SESSION['import_result'] = [
+        'success' => $successCount,
+        'error' => $errorCount,
+        'errors' => $errors
+    ];
+    
+    header("Location: siswa.php?import=done");
+    exit();
 }
 ?>
 
@@ -133,163 +123,158 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
 <html lang="id">
 <head>
     <?php include '../includes/header.php'; ?>
-    <title>Import Data Siswa</title>
-    <link rel="stylesheet" href="https://cdn.tailwindcss.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <title>Import Data Siswa dengan Foto</title>
+    <!-- Menggunakan Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .file-upload:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
-        }
-        .notification {
-            animation: slideIn 0.5s ease-out, fadeOut 3s 2s ease-out forwards;
-        }
-        @keyframes slideIn {
-            0% { transform: translateY(-100%); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; }
+        /* Custom styles if needed, but try to use Tailwind classes */
+        /* .upload-section, .instructions, .note, .btn-download, .preview-images styles can be replaced or enhanced with Tailwind */
+        .preview-images img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 0.25rem; /* rounded-md */
+            border: 1px solid #e2e8f0; /* border border-gray-200 */
         }
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- Header tetap fixed -->
     <div class="fixed top-0 left-0 w-full z-50">
         <?php include 'includes/admin_header.php'; ?>
     </div>
 
-    <?php if ($showSuccessAlert): ?>
-    <div class="fixed top-20 right-4 z-50 notification">
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-lg flex items-center space-x-3">
-            <i class="fas fa-check-circle text-green-500 text-xl"></i>
-            <div>
-                <p class="font-semibold">Import Berhasil!</p>
-                <p class="text-sm"><?= $importResult['success'] ?> data berhasil diimport</p>
-            </div>
-        </div>
-    </div>
-    <?php endif; ?>
-    
-    <div class="max-w-4xl mx-auto px-4 py-8 mt-32 animate__animated animate__fadeInUp">
+    <!-- Main content area, pushed down by fixed header -->
+    <main class="max-w-7xl mx-auto px-4 py-8 mt-32 animate__animated animate__fadeInUp">
+        <!-- Content box similar to siswa.php -->
         <div class="bg-white rounded-xl shadow-lg p-8">
-            <div class="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-6">
-                <h1 class="text-3xl font-bold text-gray-800 flex items-center mb-4 md:mb-0">
-                    <i class="fas fa-file-import text-blue-500 mr-3"></i>
-                    Import Data Siswa
-                </h1>
-                <a href="siswa.php" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all flex items-center">
-                    <i class="fas fa-users mr-2"></i> Lihat Data Siswa
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <i class="fas fa-file-import text-blue-500 mr-3"></i>
+                Import Data Siswa dengan Foto
+            </h1>
+
+            <?php
+            // Display import results if available
+            if (isset($_SESSION['import_result'])):
+                $result = $_SESSION['import_result'];
+                $successCount = $result['success'];
+                $errorCount = $result['error'];
+                $errors = $result['errors'];
+                unset($_SESSION['import_result']); // Clear results after displaying
+            ?>
+                <?php if ($successCount > 0): ?>
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Import berhasil: <?= $successCount ?> data ditambahkan/diperbarui.
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($errorCount > 0): ?>
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+                        <i class="fas fa-times-circle mr-2"></i>
+                        Import gagal: <?= $errorCount ?> data bermasalah.
+                        <?php if (!empty($errors)): ?>
+                            <ul class="mt-2 list-disc list-inside">
+                                <?php foreach ($errors as $error): ?>
+                                    <li><?= htmlspecialchars($error) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ($successCount == 0 && $errorCount == 0 && isset($_GET['import']) && $_GET['import'] == 'done'): ?>
+                     <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Tidak ada data yang diproses. Pastikan file CSV tidak kosong.
+                    </div>
+                <?php endif; ?>
+
+            <?php elseif (isset($_SESSION['error'])): ?>
+                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    <?= htmlspecialchars($_SESSION['error']) ?>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+
+            <div class="instructions bg-green-50 border-l-4 border-green-600 text-green-800 p-4 mb-6 rounded-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Petunjuk Import:</h3>
+                <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                    <li>Download template CSV terlebih dahulu.</li>
+                    <li style="word-break: break-word;">Format kolom: <strong>NISN,Nama,Kelas,Absen,Tanggal_Lahir,Status,Foto</strong></li>
+                    <li>Nama file foto di kolom 'Foto' CSV harus sesuai dengan nama file foto yang akan diupload.</li>
+                    <li>Format tanggal: <strong>YYYY-MM-DD</strong></li>
+                    <li>Status harus "Lulus" atau "Tidak Lulus".</li>
+                </ol>
+                <p class="text-red-600 font-semibold mt-3">Pastikan nama file foto di CSV sesuai dengan file yang diupload!</p>
+                <a href="../templates/template.csv" download class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                    <i class="fas fa-download mr-2"></i>Download Template CSV
                 </a>
             </div>
 
-            <div class="bg-blue-50 p-6 rounded-lg mb-8">
-                <h3 class="text-xl font-semibold text-blue-800 mb-4">Petunjuk Import:</h3>
-                <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                    <li>File harus dalam format CSV</li>
-                    <li>Gunakan <strong class="text-blue-600">titik koma (;)</strong> sebagai pemisah kolom</li>
-                    <li>Format kolom: <strong class="text-blue-600">NISN;Nama;Kelas;Absen;Status</strong></li>
-                    <li>Contoh isi: <code class="bg-gray-100 px-2 py-1 rounded">123456;John Doe;XII TKJ 1;1;Lulus</code></li>
-                    <li>Status harus "Lulus" atau "Tidak Lulus"</li>
-                </ol>
-                <div class="mt-4 flex items-center space-x-3">
-                    <p class="text-sm text-gray-600">Pastikan file CSV Anda menggunakan tanda titik koma (;) sebagai pemisah!</p>
-                </div>
-                <div class="mt-6 bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h4 class="font-medium text-gray-800">Template CSV Siap Pakai</h4>
-                            <p class="text-sm text-gray-600">Unduh template yang sudah sesuai format</p>
-                        </div>
-                        <a href="../templates/template.csv" download="template_siswa.csv" 
-                           class="bg-green-100 text-green-700 px-6 py-2 rounded-lg hover:bg-green-200 transition-all flex items-center justify-center space-x-2
-                           hover:shadow-[0_2px_8px_rgba(16,185,129,0.2)]">
-                            <i class="fas fa-file-download"></i>
-                            <span>Download Template</span>
-                        </a>
-                    </div>
-                    <div class="mt-4 p-3 bg-gray-50 rounded-lg">
-                        <p class="text-sm text-gray-600 flex items-center">
-                            <i class="fas fa-info-circle text-blue-500 mr-2"></i>
-                            Template ini sudah berisi contoh data yang bisa langsung diisi
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                <div class="file-upload p-6 bg-white border-2 border-dashed border-blue-200 rounded-lg transition-all relative">
-                    <div class="flex flex-col items-center space-y-4" id="upload-container">
-                        <label for="csv_file" class="cursor-pointer">
-                            <div class="bg-blue-50 p-4 rounded-full">
-                                <i class="fas fa-file-csv text-blue-600 text-3xl"></i>
-                            </div>
-                            <span class="mt-2 block text-sm font-medium text-blue-600">Pilih File CSV</span>
-                        </label>
+                <div class="upload-section bg-gray-100 rounded-lg p-6 shadow-md border border-gray-200">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-5">Unggah File Import</h3>
+
+                    <div class="mb-5">
+                        <label for="csv_file" class="block text-sm font-medium text-gray-700 mb-1">File CSV Data Siswa:</label>
                         <input type="file" id="csv_file" name="csv_file" accept=".csv" required
-                               class="sr-only" onchange="handleFileSelect(event)">
-                        <p class="text-sm text-gray-500" id="file-instruction">Format: CSV. Maksimal 5MB</p>
+                               class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <small class="text-gray-500 text-sm mt-1 block">Pilih file CSV yang berisi data siswa sesuai format template.</small>
                     </div>
-                    <div id="file-preview" class="hidden mt-4 p-4 bg-green-50 rounded-lg">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-file text-green-600"></i>
-                            <span class="text-sm font-medium text-green-800" id="file-name"></span>
-                            <button type="button" onclick="clearFile()" class="text-red-500 hover:text-red-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
+
+                    <div class="mb-0">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Unggah Foto Siswa (Pilih Banyak File):</label>
+                        <input type="file" name="photos[]" multiple accept="image/*"
+                               class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <small class="text-gray-500 text-sm mt-1 block">Pilih semua file foto siswa sekaligus (maks 5MB per file). Nama file foto harus sesuai dengan kolom 'Foto' di CSV.</small>
+                        <div class="preview-images mt-3 flex flex-wrap gap-2"></div>
                     </div>
                 </div>
 
-                <div class="pt-6">
-                    <button type="submit" 
-                            class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all flex items-center justify-center">
-                        <i class="fas fa-upload mr-2"></i>
-                        Import Data
+                <div class="flex items-center gap-3">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 flex items-center">
+                        <i class="fas fa-upload mr-2"></i>Import Data
                     </button>
                 </div>
             </form>
         </div>
-    </div>
-    
-    <script src="../assets/js/script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    </main>
+
+    <?php include '../includes/footer.php'; ?>
+
     <script>
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('file-preview');
-            const fileName = document.getElementById('file-name');
-            const uploadContainer = document.getElementById('upload-container');
-            const fileInstruction = document.getElementById('file-instruction');
+    // Preview foto sebelum upload
+    document.querySelector('input[name="photos[]"]').addEventListener('change', function(e) {
+        const files = e.target.files;
+        const previewDiv = document.querySelector('.preview-images');
+        previewDiv.innerHTML = ''; // Clear previous previews
 
-            if (file) {
-                fileName.textContent = file.name;
-                preview.classList.remove('hidden');
-                uploadContainer.classList.add('hidden');
-                fileInstruction.classList.add('hidden');
+        if (files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.classList.add('preview-image', 'w-12', 'h-12', 'rounded-md', 'object-cover', 'border', 'border-gray-200'); // Added Tailwind classes
+                        img.alt = file.name; // Add alt text
+                        previewDiv.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
             }
+        } else {
         }
+    });
 
-        function clearFile() {
-            const fileInput = document.getElementById('csv_file');
-            const preview = document.getElementById('file-preview');
-            const uploadContainer = document.getElementById('upload-container');
-            const fileInstruction = document.getElementById('file-instruction');
-
-            fileInput.value = '';
-            preview.classList.add('hidden');
-            uploadContainer.classList.remove('hidden');
-            fileInstruction.classList.remove('hidden');
-        }
     </script>
+    <!-- Include Font Awesome JS if needed for dynamic icons, though CSS is usually sufficient -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
 </body>
 </html>

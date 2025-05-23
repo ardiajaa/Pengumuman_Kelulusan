@@ -7,7 +7,7 @@ function isLoggedIn() {
 
 function login($email, $password) {
     // Hardcoded credentials (in real app, use database with hashed passwords)
-    $valid_email = 'ardi@gmail.com';
+    $valid_email = 'admin@admin.com';
     $valid_password = 'mahameru';
     
     if ($email === $valid_email && $password === $valid_password) {

@@ -3,4 +3,5 @@
         <p class="text-gray-600 text-sm">&copy; <?= date('Y') ?> <?= getSettings($conn)['nama_sekolah'] ?>. All rights reserved.</p>
     </div>
 </footer>
+
 </html>
