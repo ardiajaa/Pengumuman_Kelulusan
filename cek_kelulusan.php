@@ -91,9 +91,9 @@ $settings = $settings ?? [];
                                             Kelulusan</span>
                                         <span class="index-accepted-content-lower-column-note-subtitle">Untuk informasi
                                             lebih lanjut, silakan kunjungi website resmi sekolah:</span>
-                                        <a href="https://smkn1cermegresik.sch.id/" target="_blank"
+                                        <a href="<?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>" target="_blank"
                                             class="index-accepted-content-lower-column-note-link">
-                                            https://smkn1cermegresik.sch.id
+                                            <?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>
                                         </a>
                                     </div>
                                 </div>

@@ -1,17 +1,25 @@
 <?php
-function getSettings($conn)
-{
-    $result = mysqli_query($conn, "SELECT * FROM settings LIMIT 1");
-    if (!$result || mysqli_num_rows($result) == 0) {
-        // Return default settings if none found
-        return [
-            'nama_sekolah' => 'SMKN 1 CERME',
-            'logo' => 'logo.png',
-            'tahun_kelulusan' => '2025/2026',
-            'tanggal_kelulusan' => '2026-05-20 08:00:00'
-        ];
+if (!function_exists('getSettings')) {
+    function getSettings($conn)
+    {
+        $result = mysqli_query($conn, "SELECT * FROM settings LIMIT 1");
+        $settings = mysqli_fetch_assoc($result);
+        
+        // Set nilai default jika tidak ada
+        if (!$settings) {
+            $settings = [
+                'nama_sekolah' => 'SMKN 1 CERME',
+                'logo' => 'logo.png',
+                'tahun_kelulusan' => date('Y'),
+                'tanggal_kelulusan' => date('Y-m-d H:i:s', strtotime('+1 day')),
+                'link_sekolah' => 'https://smkn1cermegresik.sch.id/'
+            ];
+        } elseif (!isset($settings['link_sekolah'])) {
+            $settings['link_sekolah'] = 'https://smkn1cermegresik.sch.id/';
+        }
+        
+        return $settings;
     }
-    return mysqli_fetch_assoc($result);
 }
 
 function getSiswaByNISN($conn, $nisn)

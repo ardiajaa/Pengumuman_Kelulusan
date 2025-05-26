@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_sekolah = mysqli_real_escape_string($conn, $_POST['nama_sekolah']);
     $tahun_kelulusan = mysqli_real_escape_string($conn, $_POST['tahun_kelulusan']);
     $tanggal_kelulusan = $_POST['tanggal_kelulusan'] . ':00'; // Tambahkan detik
+    $link_sekolah = mysqli_real_escape_string($conn, $_POST['link_sekolah']);
     
     // Handle logo upload
     $logo = $_POST['existing_logo'];
@@ -35,7 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             nama_sekolah = '$nama_sekolah', 
             logo = '$logo', 
             tahun_kelulusan = '$tahun_kelulusan', 
-            tanggal_kelulusan = '$tanggal_kelulusan' 
+            tanggal_kelulusan = '$tanggal_kelulusan',
+            link_sekolah = '$link_sekolah' 
             WHERE id = 1";
     mysqli_query($conn, $sql);
     
@@ -51,7 +53,7 @@ $settings = getSettings($conn);
     <?php include '../includes/header.php'; ?>
     <title>Pengaturan</title>
     <link rel="stylesheet" href="https://cdn.tailwindcss.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         @keyframes fadeInUp {
             0% { opacity: 0; transform: translateY(20px); }
@@ -131,6 +133,15 @@ $settings = getSettings($conn);
                     <label for="tanggal_kelulusan" class="block text-sm font-medium text-gray-700">Tanggal & Jam Pengumuman</label>
                     <input type="datetime-local" id="tanggal_kelulusan" name="tanggal_kelulusan" 
                            value="<?= date('Y-m-d\TH:i', strtotime($settings['tanggal_kelulusan'])) ?>" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" required>
+                </div>
+
+                <!-- Link Sekolah -->
+                <div class="space-y-2">
+                    <label for="link_sekolah" class="block text-sm font-medium text-gray-700">Link Website Sekolah</label>
+                    <input type="url" id="link_sekolah" name="link_sekolah" 
+                           value="<?= htmlspecialchars($settings['link_sekolah'] ?? '') ?>" 
+                           placeholder="https://smkn1cermegresik.sch.id/" 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" required>
                 </div>
 
