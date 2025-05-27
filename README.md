@@ -23,8 +23,8 @@ Aplikasi web sederhana untuk mengelola dan menampilkan status kelulusan siswa. D
 
 1.  **Clone Repository:**
     ```bash
-    git clone <url_repository_anda>
-    cd <nama_folder_project>
+    git clone <https://github.com/ardiajaa/kelulusan>
+    cd <kelulusan>
     ```
 
 2.  **Setup Database:**
@@ -40,8 +40,8 @@ Aplikasi web sederhana untuk mengelola dan menampilkan status kelulusan siswa. D
     *   Pastikan PHP dan MySQL sudah terinstal dan berjalan.
 
 5.  **Akses Aplikasi:**
-    *   Akses aplikasi melalui browser: `http://localhost/<nama_folder_project>/`
-    *   Akses panel admin: `http://localhost/<nama_folder_project>/admin/`
+    *   Akses aplikasi melalui browser: `http://localhost/<kelulusan>/`
+    *   Akses panel admin: `http://localhost/<kelulusan>/admin/`
 
 ## Kredensial Admin Default
 
@@ -60,11 +60,3 @@ Anda dapat mengubah kredensial ini melalui halaman profil admin setelah login.
 *   `assets/`: Berisi aset statis (CSS, JS, gambar, upload).
 *   `index.php`: Halaman utama untuk cek kelulusan publik.
 *   `login.php`: Halaman login admin.
-
-## Kontribusi
-
-Jika Anda ingin berkontribusi, silakan fork repository ini dan buat Pull Request.
-
-## Lisensi
-
-Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file `LICENSE` untuk detail lebih lanjut.
