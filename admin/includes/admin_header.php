@@ -82,6 +82,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
             transform: rotate(-10deg) scale(1.1);
             box-shadow: 0 0 20px rgba(32, 201, 151, 0.5);
         }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            transition: opacity 0.3s ease-out;
+        }
+
+        .modal-content {
+            animation: slideIn 0.3s ease-out;
+        }
     </style>
 </head>
 
@@ -127,7 +137,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fas fa-cog text-lg"></i>
                         <span>Pengaturan</span>
                     </a>
-                    <a href="../logout.php" class="flex items-center px-5 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300
+                    <!-- Logout link with confirmation -->
+                    <a href="../logout.php" class="logout-link flex items-center px-5 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300
                     hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] space-x-2">
                         <i class="fas fa-sign-out-alt text-lg"></i>
                         <span>Logout</span>
@@ -173,7 +184,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <span>Pengaturan</span>
                 </a>
                 <a href="../logout.php"
-                    class="block px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition duration-300 transform hover:translate-x-2 flex items-center space-x-2">
+                    class="logout-link block px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition duration-300 transform hover:translate-x-2 flex items-center space-x-2">
                     <i class="fas fa-sign-out-alt text-lg"></i>
                     <span>Logout</span>
                 </a>
@@ -181,9 +192,40 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </nav>
 
+    <div id="logoutModal"
+        class="modal-overlay fixed inset-0 hidden items-center justify-center z-[100] backdrop-blur-sm bg-black/30">
+        <div class="modal-content bg-white rounded-xl shadow-2xl p-8 max-w-md mx-auto w-full animate__animated">
+            <div class="text-center">
+                <div class="mx-auto mb-6 w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt text-3xl text-red-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">Konfirmasi Logout</h3>
+                <p class="text-gray-600 mb-8">Anda akan keluar dari panel admin. Pastikan semua perubahan telah
+                    disimpan.</p>
+            </div>
+            <div class="flex justify-center space-x-4">
+                <button id="cancelLogout"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-md flex items-center space-x-2">
+                    <i class="fas fa-times"></i>
+                    <span>Batal</span>
+                </button>
+                <button id="confirmLogout"
+                    class="bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-md flex items-center space-x-2">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Ya, Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const mobileMenu = document.querySelector('.mobile-menu');
+        const logoutLinks = document.querySelectorAll('.logout-link');
+        const logoutModal = document.getElementById('logoutModal');
+        const confirmLogoutButton = document.getElementById('confirmLogout');
+        const cancelLogoutButton = document.getElementById('cancelLogout');
+        let targetLogoutUrl = '';
 
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
@@ -192,6 +234,37 @@ $current_page = basename($_SERVER['PHP_SELF']);
         document.addEventListener('click', (e) => {
             if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
                 mobileMenu.classList.add('hidden');
+            }
+        });
+
+        logoutLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                targetLogoutUrl = this.href;
+                logoutModal.classList.remove('hidden');
+                logoutModal.classList.add('flex');
+            });
+        });
+
+        confirmLogoutButton.addEventListener('click', () => {
+            logoutModal.classList.add('hidden');
+            logoutModal.classList.remove('flex');
+            if (targetLogoutUrl) {
+                window.location.href = targetLogoutUrl;
+            }
+        });
+
+        cancelLogoutButton.addEventListener('click', () => {
+            logoutModal.classList.add('hidden');
+            logoutModal.classList.remove('flex');
+            targetLogoutUrl = '';
+        });
+
+        logoutModal.addEventListener('click', (event) => {
+            if (event.target === logoutModal) {
+                logoutModal.classList.add('hidden');
+                logoutModal.classList.remove('flex');
+                targetLogoutUrl = '';
             }
         });
     </script>
