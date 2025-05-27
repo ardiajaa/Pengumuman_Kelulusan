@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nisn'])) {
     $timeLeft = getTimeLeft($settings['tanggal_kelulusan'] ?? '');
 }
 
-// Inisialisasi variabel settings jika belum ada
 $settings = $settings ?? [];
 ?>
 <!DOCTYPE html>
@@ -32,7 +31,16 @@ $settings = $settings ?? [];
 </head>
 
 <body id="body">
-    <!-- Audio untuk memutar musik latar -->
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background-image: url('assets/images/backgrounds/<?= htmlspecialchars($settings['background_image'] ?? 'default-bg.jpg') ?>'); 
+                background-size: cover; 
+                background-position: center;
+                background-attachment: fixed;
+                filter: blur(2px);
+                -webkit-filter: blur(2px);
+                z-index: -1;">
+    </div>
+
     <audio id="background-music" autoplay loop>
         <source src="/assets/mp3/17.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
@@ -46,11 +54,12 @@ $settings = $settings ?? [];
                     <div class="not-available">
                         <h3>Pengumuman kelulusan belum dimulai</h3>
                         <p>Silakan coba lagi setelah tanggal
-                            <?= date('d F Y H:i', strtotime($settings['tanggal_kelulusan'] ?? '')) ?></p>
+                            <?= date('d F Y H:i', strtotime($settings['tanggal_kelulusan'] ?? '')) ?>
+                        </p>
                         <a href="/" class="btn-back">Kembali ke Beranda</a>
                     </div>
                 <?php elseif (isset($siswa) && $siswa): ?>
-                    <div id="index-accepted" class="index-accepted">
+                    <div id="index-accepted" class="index-accepted animate__animated animate__fadeInUp">
                         <div class="index-accepted-header">
                             <img src="assets/images/<?= $settings['logo'] ?? 'default-logo.png' ?>" alt="Logo Sekolah"
                                 class="index-accepted-header-icon">
@@ -91,8 +100,8 @@ $settings = $settings ?? [];
                                             Kelulusan</span>
                                         <span class="index-accepted-content-lower-column-note-subtitle">Untuk informasi
                                             lebih lanjut, silakan kunjungi website resmi sekolah:</span>
-                                        <a href="<?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>" target="_blank"
-                                            class="index-accepted-content-lower-column-note-link">
+                                        <a href="<?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>"
+                                            target="_blank" class="index-accepted-content-lower-column-note-link">
                                             <?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>
                                         </a>
                                     </div>
@@ -104,33 +113,39 @@ $settings = $settings ?? [];
                                 sekolah. Selamat atas kelulusan Anda!</p>
                             <p class="index-accepted-footer-paragraph">Untuk informasi lebih lanjut mengenai kegiatan wisuda
                                 dan lainnya, silakan tunggu info selanjutnya.</p>
-                            <a href="/" class="index-form-content-footer-submit" style="color: #3b82f6; text-decoration: none; border: none; display: block; margin-top: 20px; background: none; padding: 0;">
+                            <a href="/"
+                                style="color: #3b82f6; text-decoration: none; display: inline-block; margin-top: 20px;">
                                 Kembali ke Beranda
                             </a>
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="index-form animate__animated animate__fadeInUp" style="max-width: 600px; margin: 0 auto;">
+                    <div id="index-accepted" class="index-accepted animate__animated animate__fadeInUp"
+                        style="max-width: 600px; margin: 0 auto; padding: 20px; border-radius: 15px;">
                         <div class="index-form-content">
                             <div class="index-form-content-header">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e82d33; margin-bottom: 20px;"></i>
+                                <i class="fas fa-exclamation-triangle"
+                                    style="font-size: 3rem; color: #e82d33; margin-bottom: 20px;"></i>
                                 <h3 class="index-form-content-title" style="color: #e82d33;">Data Tidak Ditemukan</h3>
-                                <span class="index-form-content-subtitle">NISN yang Anda masukkan tidak terdaftar dalam sistem kami.</span>
+                                <span class="index-form-content-subtitle">NISN yang Anda masukkan tidak terdaftar dalam
+                                    sistem kami.</span>
                             </div>
                             <div class="index-form-content-form">
                                 <div class="index-form-content-form-field">
-                                    <a href="/" class="index-form-content-footer-submit" style="background-color: #e82d33; border-color: #e82d33; text-decoration: none;">
+                                    <a href="/" class="index-form-content-footer-submit"
+                                        style="background-color: #e82d33; border-color: #e82d33; text-decoration: none; border-radius: 8px;">
                                         <i class="fas fa-redo-alt"></i> Coba Lagi
                                     </a>
                                 </div>
                             </div>
                             <div class="index-form-content-footer">
-                                <a href="https://smkn1cermegresik.sch.id/" class="index-form-content-footer-pdf">
-                                    © 2025 | SMK NEGERI 1 CERME GRESIK
+                                <a href="<?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>"
+                                    class="index-form-content-footer-pdf">
+                                    © <?= date('Y') ?> | <?= $settings['nama_sekolah'] ?? 'SMK NEGERI 1 CERME GRESIK' ?>
                                 </a>
                             </div>
                         </div>
-                        <div class="index-form-border"></div>
+                        <div class="index-form-border" style="border-radius: 15px;"></div>
                     </div>
                 <?php endif; ?>
             </div>
@@ -139,8 +154,7 @@ $settings = $settings ?? [];
 
     <script src="assets/js/script.js"></script>
     <script>
-        // Script untuk memastikan musik terus berputar
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var audio = document.getElementById('background-music');
             audio.play();
         });

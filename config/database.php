@@ -10,7 +10,6 @@ if (!$conn) {
     die("Koneksi gagal: " . mysqli_connect_error());
 }
 
-// Buat tabel jika belum ada
 $sql = "CREATE TABLE IF NOT EXISTS siswa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nisn VARCHAR(20) NOT NULL UNIQUE,
@@ -31,7 +30,6 @@ $sql2 = "CREATE TABLE IF NOT EXISTS settings (
 mysqli_query($conn, $sql);
 mysqli_query($conn, $sql2);
 
-// Insert default settings if empty
 $check = mysqli_query($conn, "SELECT COUNT(*) as total FROM settings");
 $row = mysqli_fetch_assoc($check);
 if ($row['total'] == 0) {

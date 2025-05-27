@@ -1,38 +1,40 @@
-// Countdown Timer
 function updateCountdown() {
-    const countdown = document.getElementById('countdown-timer');
-    if (!countdown) return;
+  const countdown = document.getElementById("countdown-timer");
+  if (!countdown) return;
 
-    const targetDate = countdown.dataset.target;
-    if (!targetDate) return;
+  const targetDate = countdown.dataset.target;
+  if (!targetDate) return;
 
-    // Parse tanggal dengan timezone lokal browser
-    const now = new Date();
-    const target = new Date(targetDate);
-    
-    // Hitung selisih dalam detik
-    const diff = (target - now) / 1000;
-    
-    // Jika waktu sudah lewat
-    if (diff <= 0) {
-        countdown.innerHTML = '<div class="time-up">PENGUMUMAN TELAH DIMULAI!</div>';
-        return;
-    }
-    
-    // Hitung komponen waktu
-    const days = Math.floor(diff / (60 * 60 * 24));
-    const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
-    const minutes = Math.floor((diff % (60 * 60)) / 60);
-    const seconds = Math.floor(diff % 60);
-    
-    // Update tampilan
-    document.getElementById('days').textContent = days.toString().padStart(2, '0');
-    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+  const now = new Date();
+  const target = new Date(targetDate);
+
+  const diff = (target - now) / 1000;
+
+  if (diff <= 0) {
+    countdown.innerHTML =
+      '<div class="time-up">PENGUMUMAN TELAH DIMULAI!</div>';
+    return;
+  }
+
+  const days = Math.floor(diff / (60 * 60 * 24));
+  const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+  const minutes = Math.floor((diff % (60 * 60)) / 60);
+  const seconds = Math.floor(diff % 60);
+
+  document.getElementById("days").textContent = days
+    .toString()
+    .padStart(2, "0");
+  document.getElementById("hours").textContent = hours
+    .toString()
+    .padStart(2, "0");
+  document.getElementById("minutes").textContent = minutes
+    .toString()
+    .padStart(2, "0");
+  document.getElementById("seconds").textContent = seconds
+    .toString()
+    .padStart(2, "0");
 }
 
-// Admin Modal
 function setupAdminModal() {
   const modal = document.getElementById("studentModal");
   if (!modal) return;
@@ -65,7 +67,6 @@ function setupAdminModal() {
   });
 }
 
-// Edit Student Function
 function editStudent(id, nisn, nama, kelas, absen, status) {
   const modal = document.getElementById("studentModal");
   modal.style.display = "block";
@@ -80,7 +81,6 @@ function editStudent(id, nisn, nama, kelas, absen, status) {
   document.getElementById("status").value = status;
 }
 
-// Logo Preview
 function setupLogoPreview() {
   const logoInput = document.getElementById("logo");
   if (!logoInput) return;
@@ -99,7 +99,6 @@ function setupLogoPreview() {
   });
 }
 
-// Initialize all functions when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
   updateCountdown();
   setInterval(updateCountdown, 1000);

@@ -89,10 +89,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <nav class="bg-white/95 backdrop-blur-md shadow-xl fixed w-full z-50" style="animation: slideIn 0.5s ease-out">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-24 items-center">
-                <!-- Logo Section -->
                 <div class="flex items-center space-x-4">
-                    <div
-                        class="p-2 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg">
+                    <div class="p-2 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl shadow-md transform transition-transform duration-300 hover:scale-105 hover:shadow-lg active:scale-95 active:shadow-inner cursor-pointer"
+                        onclick="window.location.reload()">
                         <img src="../assets/images/<?= getSettings($conn)['logo'] ?? 'default_logo.png' ?>"
                             alt="Logo Sekolah" class="rounded-lg" style="max-height: 60px; width: auto;">
                     </div>
@@ -103,11 +102,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </a>
                         <p class="text-sm text-gray-500 mt-1">
                             <?= getSettings($conn)['nama_sekolah'] ?? 'Nama Sekolah' ?>
-                        </p> <!-- Tambahkan fallback -->
+                        </p>
                     </div>
                 </div>
 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="dashboard.php" class="nav-link <?= $current_page == 'dashboard.php' ? 'active-nav text-teal-700' : 'text-gray-700 hover:text-teal-600' ?>
                     px-5 py-3 text-sm font-medium flex items-center space-x-2">
@@ -136,7 +134,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </a>
                 </div>
 
-                <!-- Mobile Menu Button -->
                 <div class="flex items-center md:hidden">
                     <button type="button" class="mobile-menu-button p-3 rounded-lg text-gray-500 hover:text-gray-700 focus:outline-none
                     transition duration-300 hover:bg-gray-100">
@@ -149,7 +146,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </div>
 
-        <!-- Mobile Menu -->
         <div class="mobile-menu hidden md:hidden bg-white/95 backdrop-blur-md shadow-xl">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="dashboard.php"
@@ -186,7 +182,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </nav>
 
     <script>
-        // Mobile menu toggle
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const mobileMenu = document.querySelector('.mobile-menu');
 
@@ -194,7 +189,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             mobileMenu.classList.toggle('hidden');
         });
 
-        // Close mobile menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
                 mobileMenu.classList.add('hidden');
@@ -202,7 +196,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
         });
     </script>
 
-    <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
 </body>
 

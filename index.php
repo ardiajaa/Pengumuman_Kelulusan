@@ -1006,9 +1006,7 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            /* Semi-transparent dark background */
             z-index: 9999;
-            /* Ensure it's on top */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1017,11 +1015,8 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             font-size: 1.5rem;
             text-align: center;
             opacity: 0;
-            /* Start hidden */
             visibility: hidden;
-            /* Start hidden */
             transition: opacity 0.5s ease, visibility 0.5s ease;
-            /* Smooth transition */
         }
 
         #loading-screen.visible {
@@ -1031,12 +1026,9 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
 
         #loading-screen i {
             font-size: 3rem;
-            /* Size of the spinner icon */
             margin-bottom: 20px;
             color: #88ccf0;
-            /* Color matching the theme */
             animation: spin 1.5s linear infinite;
-            /* Add spin animation */
         }
 
         @keyframes spin {
@@ -1055,7 +1047,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             letter-spacing: 1px;
         }
 
-        /* Style untuk mobile */
         @media (max-width: 600px) {
             .index-form-content-footer {
                 flex-direction: column;
@@ -1077,8 +1068,17 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
     </style>
 </head>
 
-<body id="body"
-    style="background-image: url('assets/images/bg.jpg'); background-size: cover; background-position: center;">
+<body id="body">
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background-image: url('assets/images/backgrounds/<?= htmlspecialchars($settings['background_image'] ?? 'default-bg.jpg') ?>');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                filter: blur(2px);
+                -webkit-filter: blur(2px);
+                z-index: -1;">
+    </div>
+
     <div id="main" class="main">
         <div id="main-background" class="main-background" style="opacity: 1; background: none;"></div>
         <div id="main-route" class="main-route">
@@ -1112,8 +1112,8 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                                 id="seconds"><?= str_pad($timeLeft % 60, 2, '0', STR_PAD_LEFT) ?></span>
                         </div>
                     </div>
-                    <div class="index-timer-note">
-                        <span class="index-timer-note-event">PENGUMUMAN KELULUSAN
+                    <div class="index-timer-note" style="display: flex; flex-direction: column; align-items: center;">
+                        <span class="index-timer-note-event" style="margin-bottom: 10px;">PENGUMUMAN KELULUSAN
                             <?= htmlspecialchars($settings['nama_sekolah']) ?>
                             <?= htmlspecialchars($settings['tahun_kelulusan']) ?></span>
                         <span class="index-timer-note-deadline">Akan diumumkan pada:
@@ -1121,7 +1121,6 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                     </div>
                 </div>
             <?php else: ?>
-                <!-- Form Kelulusan -->
                 <div id="index-form" class="index-form animate__animated animate__fadeInUp">
                     <form id="graduation-form" class="index-form-content" action="cek_kelulusan.php" method="POST">
                         <div class="index-form-content-logo">
@@ -1141,7 +1140,8 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                             <div class="index-form-content-form-field">
                                 <span class="index-form-content-form-field-caption">NISN</span>
                                 <input class="index-form-content-form-field-input" id="index-form-registration-number"
-                                    name="nisn" type="text" placeholder="Masukkan NISN" required />
+                                    name="nisn" type="number" pattern="[0-9]*" inputmode="numeric"
+                                    placeholder="Masukkan NISN" required />
                             </div>
                         </div>
 
@@ -1150,8 +1150,9 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                         <div class="index-form-content-footer">
                             <input type="submit" class="index-form-content-footer-submit" id="index-form-submit"
                                 value="CEK STATUS KELULUSAN" />
-                            <a href="https://smkn1cermegresik.sch.id/" class="index-form-content-footer-pdf">
-                                © 2025 | SMK NEGERI 1 CERME GRESIK
+                            <a href="<?= $settings['link_sekolah'] ?? 'https://smkn1cermegresik.sch.id/' ?>"
+                                class="index-form-content-footer-pdf">
+                                © <?= date('Y') ?> | <?= $settings['nama_sekolah'] ?? 'SMK NEGERI 1 CERME GRESIK' ?>
                             </a>
                         </div>
                     </form>
@@ -1161,24 +1162,21 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         </div>
     </div>
 
-    <!-- Loading Screen HTML -->
     <div id="loading-screen">
         <i class="fas fa-spinner fa-spin"></i>
         <p>Memuat data kelulusan...</p>
     </div>
 
     <script>
-        // Fungsi update countdown yang diperbaiki
         function updateCountdown() {
             const countdown = document.getElementById('countdown-timer');
             if (!countdown) return;
 
             const targetDate = new Date(countdown.dataset.target);
             const now = new Date();
-            const diff = (targetDate - now) / 1000; // Selisih dalam detik
+            const diff = (targetDate - now) / 1000;
 
             if (diff <= 0) {
-                // Waktu habis, tampilkan form tanpa refresh
                 const timerElement = document.getElementById('countdown-timer');
                 const formElement = document.getElementById('index-form');
                 if (timerElement) timerElement.style.display = 'none';
@@ -1203,35 +1201,28 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             if (secondsElement) secondsElement.textContent = seconds.toString().padStart(2, '0');
         }
 
-        // Inisialisasi
         document.addEventListener('DOMContentLoaded', function () {
-            // Jalankan segera
             updateCountdown();
 
-            // Atur interval hanya jika countdown masih ada
             if (document.getElementById('countdown-timer')) {
                 window.countdownInterval = setInterval(updateCountdown, 1000);
             }
 
-            // Tambahkan event listener untuk form submission
             const graduationForm = document.getElementById('graduation-form');
             const loadingScreen = document.getElementById('loading-screen');
 
             if (graduationForm && loadingScreen) {
                 graduationForm.addEventListener('submit', function (event) {
-                    // Prevent default form submission
                     event.preventDefault();
 
-                    // Show loading screen with animation
                     loadingScreen.classList.add('visible');
 
-                    // Store the form reference
                     const form = this;
 
-                    // Submit the form after a 5-second delay
                     setTimeout(function () {
+                        loadingScreen.classList.remove('visible');
                         form.submit();
-                    }, 5000); // Delay in milliseconds (5000ms = 5 seconds)
+                    }, 3000);
                 });
             }
         });

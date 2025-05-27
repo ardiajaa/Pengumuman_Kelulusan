@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Ambil pengaturan untuk header
 $settings = getSettings($conn);
 ?>
 <!DOCTYPE html>
