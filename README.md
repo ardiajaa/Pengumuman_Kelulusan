@@ -4,16 +4,16 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 
 ## Preview Aplikasi
 
-![Tampilan Utama](@1.png)
+![Tampilan Utama](https://github.com/ardiajaa/kelulusan/blob/main/1.png)
 *Gambar 1: Tampilan utama cek kelulusan*
 
-![Hasil Kelulusan](@2.png)  
+![Hasil Kelulusan](https://github.com/ardiajaa/kelulusan/blob/main/2.png)  
 *Gambar 2: Tampilan hasil kelulusan*
 
-![Dashboard Admin](@3.png)  
+![Dashboard Admin](https://github.com/ardiajaa/kelulusan/blob/main/3.png)  
 *Gambar 3: Dashboard admin*
 
-![Countdown Timer](@4.png)  
+![Countdown Timer](https://github.com/ardiajaa/kelulusan/blob/main/4.png)  
 *Gambar 4: Countdown timer pengumuman kelulusan*
 
 ## Fitur Utama
@@ -137,8 +137,8 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/username/repository.git
-   cd repository
+   git clone https://github.com/ardiajaa/kelulusan
+   cd kelulusan
    ```
 
 2. **Persyaratan Sistem**
