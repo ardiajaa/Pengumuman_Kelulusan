@@ -1,73 +1,176 @@
 # Aplikasi Kelulusan Siswa
 
-Aplikasi web sederhana untuk mengelola dan menampilkan status kelulusan siswa. Dilengkapi dengan panel admin untuk manajemen data siswa dan pengaturan sekolah.
+Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa dengan antarmuka admin yang lengkap dan sistem keamanan terintegrasi.
 
-## Fitur
+## Fitur Utama
 
-*   **Panel Admin:**
-    *   Login dan Logout admin.
-    *   Manajemen data siswa (Tambah, Edit, Hapus).
-    *   Pengaturan informasi sekolah (Nama, Logo, Tahun Kelulusan, Tanggal Kelulusan, Link Sekolah, Background).
-    *   Profil Admin dan Riwayat Login.
-    *   Ubah Password Admin.
-*   **Tampilan Publik:**
-    *   Menampilkan status kelulusan siswa berdasarkan NISN.
+### Panel Admin (@admin/)
+* **Autentikasi & Keamanan (@auth.php, @login.php)**
+  - Sistem login/logout dengan session management
+  - Enkripsi password menggunakan password_hash()
+  - Redirect otomatis jika belum login
+  - Log riwayat login dengan detail:
+    * Waktu login
+    * IP Address
+    * User Agent
+    * Lokasi geografis
+    * Jenis perangkat
+  - Validasi input dan proteksi SQL injection
+
+* **Manajemen Siswa (@siswa.php, @import.php)**
+  - CRUD data siswa (NISN, Nama, Kelas, Absen, Status)
+  - Import data siswa dari file Excel/CSV
+  - Validasi data sebelum import
+  - Tampilan tabel siswa dengan fitur:
+    * Pencarian
+    * Filter
+    * Pagination
+    * Export data
+
+* **Pengaturan Sekolah (@settings.php)**
+  - Konfigurasi informasi sekolah:
+    * Nama sekolah
+    * Logo sekolah (upload gambar)
+    * Tahun kelulusan
+    * Tanggal kelulusan
+    * Link website sekolah
+    * Background website (upload gambar)
+  - Validasi file upload (format, ukuran)
+  - Preview gambar sebelum upload
+
+* **Profil Admin (@profile.php)**
+  - Update profil (nama, email)
+  - Ubah password dengan validasi:
+    * Verifikasi password lama
+    * Konfirmasi password baru
+    * Validasi kekuatan password
+  - Riwayat login terakhir
+  - Daftar 10 riwayat login terakhir
+
+* **Dashboard (@dashboard.php)**
+  - Statistik kelulusan siswa
+  - Grafik persentase kelulusan
+  - Card informasi:
+    * Total siswa
+    * Jumlah lulus
+    * Jumlah tidak lulus
+  - Navigasi cepat ke fitur utama
+
+### Tampilan Publik (@index.php, @cek_kelulusan.php)
+* Cek status kelulusan berdasarkan NISN
+* Animasi modern dengan Animate.css
+* Desain responsif dengan Tailwind CSS
+* Background dinamis dari pengaturan admin
+* Informasi sekolah otomatis dari database
+* Validasi input NISN
+* Tampilan hasil kelulusan dengan animasi
+
+## Struktur File Penting
+
+### Core System
+* `config/`
+  - `database.php`: Konfigurasi koneksi database
+  - `auth.php`: Sistem autentikasi dan keamanan
+* `includes/`
+  - `functions.php`: Fungsi-fungsi utilitas
+  - `admin_header.php`: Header panel admin
+  - `header.php`: Header tampilan publik
+
+### Admin Panel
+* `admin/`
+  - `dashboard.php`: Dashboard admin
+  - `siswa.php`: Manajemen data siswa
+  - `import.php`: Import data siswa
+  - `settings.php`: Pengaturan sekolah
+  - `profile.php`: Profil admin
+
+### Public Interface
+* `index.php`: Halaman utama cek kelulusan
+* `cek_kelulusan.php`: Proses cek kelulusan
+* `login.php`: Halaman login admin
+
+### Assets
+* `assets/`
+  - `css/`: Stylesheet (Tailwind, custom)
+  - `js/`: JavaScript (Particles.js, custom)
+  - `images/`: Gambar (logo, background)
+  - `uploads/`: File upload (logo, background)
 
 ## Teknologi yang Digunakan
 
-*   **Backend:**
-    *   PHP (Native)
-    *   MySQL (Database)
-*   **Frontend:**
-    *   HTML
-    *   CSS
-        *   Tailwind CSS
-        *   Animate.css
-        *   Font Awesome
-    *   JavaScript
-        *   Native JavaScript
-        *   Particles.js
-        *   Alpine.js
-        *   Chart.js
+### Backend
+* PHP 7.4+ (Native)
+* MySQL 5.7+
+* Session Management
+* Password Hashing
+* IP Geolocation API
+* User Agent Parsing
+* File Upload Handling
 
-## Instalasi
+### Frontend
+* HTML5
+* Tailwind CSS 2.2+
+* Animate.css 4.1+
+* Font Awesome 6.4+
+* JavaScript (Native)
+* Particles.js
+* Chart.js
+* Modern UI/UX Design
+* Responsive Layout
+* Interactive Animations
 
-1.  **Clone Repository:**
-    ```bash
-    git clone https://github.com/ardiajaa/kelulusan
-    cd kelulusan
-    ```
+## Instalasi & Konfigurasi
 
-2.  **Setup Database:**
-    *   Buat database MySQL baru (misalnya `smk_kelulusan`).
-    *   Impor skema database. Anda bisa menjalankan script `config/database.php` melalui browser atau menjalankan perintah SQL dari file tersebut secara manual. Script ini akan membuat tabel `siswa`, `settings`, `admin`, dan `riwayat_login`, serta mengisi data default untuk `settings` dan `admin`.
+1. **Persyaratan Sistem**
+   - PHP 7.4 atau lebih baru
+   - MySQL 5.7 atau lebih baru
+   - Web server (Apache/Nginx)
+   - Composer (untuk dependensi)
 
-3.  **Konfigurasi Database:**
-    *   Buka file `config/database.php`.
-    *   Sesuaikan detail koneksi database (`$host`, `$username`, `$password`, `$database`) jika diperlukan.
+2. **Setup Database**
+   - Buat database baru (contoh: `smk_kelulusan`)
+   - Import file SQL: `/config/smk_kelulusan.sql`
+   - Tabel yang akan dibuat:
+     * `siswa`: Data siswa
+     * `settings`: Pengaturan sekolah
+     * `admin`: Data admin
+     * `riwayat_login`: Log aktivitas login
 
-4.  **Konfigurasi Web Server:**
-    *   Tempatkan folder project di direktori root web server Anda (misalnya `htdocs` untuk XAMPP, `www` untuk WAMP, atau `/var/www/html` untuk Apache di Linux).
-    *   Pastikan PHP dan MySQL sudah terinstal dan berjalan.
+3. **Konfigurasi Aplikasi**
+   - Buka `config/database.php`
+   - Sesuaikan parameter koneksi:
+     ```php
+     $host = 'localhost';
+     $username = 'root';
+     $password = '';
+     $database = 'smk_kelulusan';
+     ```
+   - Atur BASE_URL jika diperlukan
 
-5.  **Akses Aplikasi:**
-    *   Akses aplikasi melalui browser: `http://localhost/kelulusan/`
-    *   Akses panel admin: `http://localhost/kelulusan/admin/`
+4. **Deploy Aplikasi**
+   - Letakkan folder aplikasi di root web server
+   - Set permission folder `assets/uploads` ke 755
+   - Pastikan PHP extension berikut aktif:
+     * mysqli
+     * pdo_mysql
+     * fileinfo
+     * session
 
-## Kredensial Admin Default
+5. **Akses Aplikasi**
+   - Tampilan publik: `http://localhost/kelulusan/`
+   - Panel admin: `http://localhost/kelulusan/admin/`
+   - Login admin default:
+     * Email: admin@admin.com
+     * Password: mahameru
 
-Setelah setup database, admin default akan dibuat dengan kredensial berikut:
+## Keamanan Sistem
 
-*   **Email:** `admin@admin.com`
-*   **Password:** `mahameru`
-
-Anda dapat mengubah kredensial ini melalui halaman profil admin setelah login.
-
-## Struktur Folder Penting
-
-*   `admin/`: Berisi file-file untuk panel admin.
-*   `config/`: Berisi file konfigurasi (database, autentikasi).
-*   `includes/`: Berisi file-file yang di-include (header, footer, functions).
-*   `assets/`: Berisi aset statis (CSS, JS, gambar, upload).
-*   `index.php`: Halaman utama untuk cek kelulusan publik.
-*   `login.php`: Halaman login admin.
+* Enkripsi password dengan password_hash()
+* Proteksi SQL injection menggunakan prepared statements
+* Validasi input data
+* Session management dengan timeout
+* Log aktivitas login
+* Deteksi lokasi dan perangkat
+* Validasi file upload
+* CSRF protection
+* XSS prevention

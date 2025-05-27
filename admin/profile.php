@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_nama'] = $nama;
             $_SESSION['admin_email'] = $email;
             $success = 'Profil berhasil diperbarui!';
-            $admin = getCurrentAdmin($conn); // Refresh data admin
+            $admin = getCurrentAdmin($conn);
         } else {
             $error = 'Gagal memperbarui profil: ' . mysqli_error($conn);
         }
@@ -97,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="max-w-6xl mx-auto px-4 py-8 mt-32 animate__animated animate__fadeInUp">
         <div class="flex flex-col md:flex-row gap-6">
-            <!-- Profil Section -->
             <div class="w-full md:w-1/3">
                 <div class="profile-card p-6 shadow-lg">
                     <div class="text-center mb-6">
@@ -152,7 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 <?php endif; ?>
                 
-                <!-- Edit Profil Form -->
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-user-edit text-blue-500 mr-2"></i>
@@ -183,7 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
                 
-                <!-- Ganti Password Form -->
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-lock text-blue-500 mr-2"></i>
@@ -221,7 +218,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </form>
                 </div>
                 
-                <!-- Riwayat Login -->
                 <div class="bg-white rounded-xl shadow-lg p-6">
                     <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-history text-blue-500 mr-2"></i>

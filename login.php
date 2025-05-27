@@ -1,6 +1,6 @@
 <?php
-require_once 'config/auth.php';
 require_once 'config/database.php';
+require_once 'config/auth.php';
 require_once 'includes/functions.php';
 
 if (isLoggedIn()) {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if (login($email, $password)) {
+    if (login($email, $password, $conn)) {
         header("Location: admin/dashboard.php");
         exit();
     } else {

@@ -137,7 +137,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <i class="fas fa-cog text-lg"></i>
                         <span>Pengaturan</span>
                     </a>
-                    <!-- Logout link with confirmation -->
+                    <a href="profile.php" class="nav-link <?= $current_page == 'profile.php' ? 'active-nav text-teal-700' : 'text-gray-700 hover:text-teal-600' ?>
+                    px-5 py-3 text-sm font-medium flex items-center space-x-2">
+                        <i class="fas fa-user-circle text-lg"></i>
+                        <span>Profil</span>
+                    </a>
                     <a href="../logout.php" class="logout-link flex items-center px-5 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300
                     hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] space-x-2">
                         <i class="fas fa-sign-out-alt text-lg"></i>
@@ -182,6 +186,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 block px-4 py-3 rounded-lg text-base font-medium transition duration-300 transform hover:translate-x-2 flex items-center space-x-2">
                     <i class="fas fa-cog text-lg"></i>
                     <span>Pengaturan</span>
+                </a>
+                <a href="profile.php"
+                    class="<?= $current_page == 'profile.php' ? 'bg-teal-100 text-teal-700' : 'text-gray-700 hover:bg-gray-100' ?>
+                block px-4 py-3 rounded-lg text-base font-medium transition duration-300 transform hover:translate-x-2 flex items-center space-x-2">
+                    <i class="fas fa-user-circle text-lg"></i>
+                    <span>Profil</span>
                 </a>
                 <a href="../logout.php"
                     class="logout-link block px-4 py-3 rounded-lg text-base font-medium text-red-600 hover:bg-red-50 transition duration-300 transform hover:translate-x-2 flex items-center space-x-2">
