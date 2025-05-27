@@ -5,7 +5,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 ## Fitur Utama
 
 ### Panel Admin (@admin/)
-* **Autentikasi & Keamanan (@auth.php, @login.php)**
+* **Autentikasi & Keamanan**
   - Sistem login/logout dengan session management
   - Enkripsi password menggunakan password_hash()
   - Redirect otomatis jika belum login
@@ -13,11 +13,11 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
     * Waktu login
     * IP Address
     * User Agent
-    * Lokasi geografis
+    * Lokasi geografis menggunakan API ipinfo.io
     * Jenis perangkat
   - Validasi input dan proteksi SQL injection
 
-* **Manajemen Siswa (@siswa.php, @import.php)**
+* **Manajemen Siswa**
   - CRUD data siswa (NISN, Nama, Kelas, Absen, Status)
   - Import data siswa dari file Excel/CSV
   - Validasi data sebelum import
@@ -27,7 +27,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
     * Pagination
     * Export data
 
-* **Pengaturan Sekolah (@settings.php)**
+* **Pengaturan Sekolah**
   - Konfigurasi informasi sekolah:
     * Nama sekolah
     * Logo sekolah (upload gambar)
@@ -38,7 +38,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
   - Validasi file upload (format, ukuran)
   - Preview gambar sebelum upload
 
-* **Profil Admin (@profile.php)**
+* **Profil Admin**
   - Update profil (nama, email)
   - Ubah password dengan validasi:
     * Verifikasi password lama
@@ -47,7 +47,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
   - Riwayat login terakhir
   - Daftar 10 riwayat login terakhir
 
-* **Dashboard (@dashboard.php)**
+* **Dashboard**
   - Statistik kelulusan siswa
   - Grafik persentase kelulusan
   - Card informasi:
@@ -56,7 +56,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
     * Jumlah tidak lulus
   - Navigasi cepat ke fitur utama
 
-### Tampilan Publik (@index.php, @cek_kelulusan.php)
+### Tampilan Publik
 * Cek status kelulusan berdasarkan NISN
 * Animasi modern dengan Animate.css
 * Desain responsif dengan Tailwind CSS
@@ -70,7 +70,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 ### Core System
 * `config/`
   - `database.php`: Konfigurasi koneksi database
-  - `auth.php`: Sistem autentikasi dan keamanan
+  - `auth.php`: Sistem autentikasi dan keamanan (termasuk integrasi API ipinfo.io)
 * `includes/`
   - `functions.php`: Fungsi-fungsi utilitas
   - `admin_header.php`: Header panel admin
@@ -103,7 +103,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * MySQL 5.7+
 * Session Management
 * Password Hashing
-* IP Geolocation API
+* IP Geolocation API (ipinfo.io)
 * User Agent Parsing
 * File Upload Handling
 
@@ -126,6 +126,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
    - MySQL 5.7 atau lebih baru
    - Web server (Apache/Nginx)
    - Composer (untuk dependensi)
+   - API Key ipinfo.io (gratis di https://ipinfo.io/)
 
 2. **Setup Database**
    - Buat database baru (contoh: `smk_kelulusan`)
@@ -144,6 +145,11 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
      $username = 'root';
      $password = '';
      $database = 'smk_kelulusan';
+     ```
+   - Buka `config/auth.php`
+   - Tambahkan API Key dari ipinfo.io:
+     ```php
+     $api_key = 'YOUR_API_KEY_HERE';
      ```
    - Atur BASE_URL jika diperlukan
 
@@ -169,7 +175,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * Proteksi SQL injection menggunakan prepared statements
 * Validasi input data
 * Session management dengan timeout
-* Log aktivitas login
+* Log aktivitas login dengan deteksi lokasi menggunakan API ipinfo.io
 * Deteksi lokasi dan perangkat
 * Validasi file upload
 * CSRF protection
