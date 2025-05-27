@@ -15,16 +15,27 @@ Aplikasi web sederhana untuk mengelola dan menampilkan status kelulusan siswa. D
 
 ## Teknologi yang Digunakan
 
-*   PHP
-*   MySQL
-*   HTML, CSS, JavaScript (Frontend)
+*   **Backend:**
+    *   PHP (Native)
+    *   MySQL (Database)
+*   **Frontend:**
+    *   HTML
+    *   CSS
+        *   Tailwind CSS
+        *   Animate.css
+        *   Font Awesome
+    *   JavaScript
+        *   Native JavaScript
+        *   Particles.js
+        *   Alpine.js
+        *   Chart.js
 
 ## Instalasi
 
 1.  **Clone Repository:**
     ```bash
-    git clone <https://github.com/ardiajaa/kelulusan>
-    cd <kelulusan>
+    git clone https://github.com/ardiajaa/kelulusan
+    cd kelulusan
     ```
 
 2.  **Setup Database:**
@@ -40,8 +51,8 @@ Aplikasi web sederhana untuk mengelola dan menampilkan status kelulusan siswa. D
     *   Pastikan PHP dan MySQL sudah terinstal dan berjalan.
 
 5.  **Akses Aplikasi:**
-    *   Akses aplikasi melalui browser: `http://localhost/<kelulusan>/`
-    *   Akses panel admin: `http://localhost/<kelulusan>/admin/`
+    *   Akses aplikasi melalui browser: `http://localhost/kelulusan/`
+    *   Akses panel admin: `http://localhost/kelulusan/admin/`
 
 ## Kredensial Admin Default
 
