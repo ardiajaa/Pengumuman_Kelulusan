@@ -2,9 +2,23 @@
 
 Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa dengan antarmuka admin yang lengkap dan sistem keamanan terintegrasi.
 
+## Preview Aplikasi
+
+![Tampilan Utama](@1.png)
+*Gambar 1: Tampilan utama cek kelulusan*
+
+![Hasil Kelulusan](@2.png)  
+*Gambar 2: Tampilan hasil kelulusan*
+
+![Dashboard Admin](@3.png)  
+*Gambar 3: Dashboard admin*
+
+![Countdown Timer](@4.png)  
+*Gambar 4: Countdown timer pengumuman kelulusan*
+
 ## Fitur Utama
 
-### Panel Admin (@admin/)
+### Panel Admin
 * **Autentikasi & Keamanan**
   - Sistem login/logout dengan session management
   - Enkripsi password menggunakan password_hash()
@@ -121,14 +135,20 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 
 ## Instalasi & Konfigurasi
 
-1. **Persyaratan Sistem**
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/username/repository.git
+   cd repository
+   ```
+
+2. **Persyaratan Sistem**
    - PHP 7.4 atau lebih baru
    - MySQL 5.7 atau lebih baru
    - Web server (Apache/Nginx)
    - Composer (untuk dependensi)
    - API Key ipinfo.io (gratis di https://ipinfo.io/)
 
-2. **Setup Database**
+3. **Setup Database**
    - Buat database baru (contoh: `smk_kelulusan`)
    - Import file SQL: `/config/smk_kelulusan.sql`
    - Tabel yang akan dibuat:
@@ -137,7 +157,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
      * `admin`: Data admin
      * `riwayat_login`: Log aktivitas login
 
-3. **Konfigurasi Aplikasi**
+4. **Konfigurasi Aplikasi**
    - Buka `config/database.php`
    - Sesuaikan parameter koneksi:
      ```php
@@ -153,7 +173,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
      ```
    - Atur BASE_URL jika diperlukan
 
-4. **Deploy Aplikasi**
+5. **Deploy Aplikasi**
    - Letakkan folder aplikasi di root web server
    - Set permission folder `assets/uploads` ke 755
    - Pastikan PHP extension berikut aktif:
@@ -162,7 +182,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
      * fileinfo
      * session
 
-5. **Akses Aplikasi**
+6. **Akses Aplikasi**
    - Tampilan publik: `http://localhost/kelulusan/`
    - Panel admin: `http://localhost/kelulusan/admin/`
    - Login admin default:
