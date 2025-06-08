@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 27, 2025 at 05:55 AM
+-- Generation Time: Jun 08, 2025 at 12:06 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -41,7 +41,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`id`, `nama`, `email`, `password`, `terakhir_login`, `dibuat_pada`) VALUES
-(1, 'Administrator', 'admin@admin.com', '$2y$10$eYjPAdecB3XB1Q4dAPG8au0CLz2sW9IT6REAAHWUyfpr/P7wa39x2', '2025-05-27 05:49:45', '2025-05-27 11:47:48');
+(1, 'Administrator', 'admin@admin.com', '$2y$10$6O/0q/RluEn7v4WJFi7Yv.EEXTgAYRiThloS3F34a7LuCmsGntcdO', '2025-06-08 12:02:19', '2025-05-27 11:47:48');
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,13 @@ CREATE TABLE `riwayat_login` (
 
 INSERT INTO `riwayat_login` (`id`, `admin_id`, `waktu_login`, `ip_address`, `user_agent`, `lokasi`, `perangkat`) VALUES
 (1, 1, '2025-05-27 12:11:17', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Lokasi tidak diketahui', 'Desktop - Google Chrome 136.0.0.0 on Windows'),
-(2, 1, '2025-05-27 12:49:56', '192.168.0.74', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 'Lokasi tidak diketahui', 'Mobile - Google Chrome 126.0.0.0 on Linux');
+(2, 1, '2025-05-27 12:49:56', '192.168.0.74', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 'Lokasi tidak diketahui', 'Mobile - Google Chrome 126.0.0.0 on Linux'),
+(3, 1, '2025-05-27 13:18:38', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Lokasi tidak diketahui', 'Desktop - Google Chrome 136.0.0.0 on Windows'),
+(4, 1, '2025-05-27 13:19:48', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36', 'Lokasi tidak diketahui', 'Desktop - Google Chrome 136.0.0.0 on Windows'),
+(5, 1, '2025-05-27 13:25:35', '192.168.0.74', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 'Lokasi tidak diketahui', 'Mobile - Google Chrome 126.0.0.0 on Linux'),
+(6, 1, '2025-05-27 15:08:41', '192.168.1.60', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 'Lokasi tidak diketahui', 'Mobile - Google Chrome 126.0.0.0 on Linux'),
+(7, 1, '2025-06-08 15:25:17', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'Lokasi tidak diketahui', 'Desktop - Google Chrome 137.0.0.0 on Windows'),
+(8, 1, '2025-06-08 19:02:19', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36', 'Lokasi tidak diketahui', 'Desktop - Google Chrome 137.0.0.0 on Windows');
 
 -- --------------------------------------------------------
 
@@ -80,15 +86,16 @@ CREATE TABLE `settings` (
   `tahun_kelulusan` varchar(10) NOT NULL,
   `tanggal_kelulusan` datetime NOT NULL,
   `link_sekolah` varchar(255) DEFAULT NULL,
-  `background_image` varchar(255) DEFAULT NULL
+  `background_image` varchar(255) DEFAULT NULL,
+  `background_sound` varchar(255) DEFAULT 'sound.mp3'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `nama_sekolah`, `logo`, `tahun_kelulusan`, `tanggal_kelulusan`, `link_sekolah`, `background_image`) VALUES
-(1, 'SMKN 1 CERME', 'logo-1748314727.png', '2025/2026', '2025-05-20 00:00:00', 'https://smkn1cermegresik.sch.id/', 'bg-1748243512.jpg');
+INSERT INTO `settings` (`id`, `nama_sekolah`, `logo`, `tahun_kelulusan`, `tanggal_kelulusan`, `link_sekolah`, `background_image`, `background_sound`) VALUES
+(1, 'SMKN 1 CERME', 'logo-1748314727.png', '2025/2026', '2025-05-20 00:00:00', 'https://smkn1cermegresik.sch.id/', 'bg-1749371756.jpg', 'sound-1749375526.mp3');
 
 -- --------------------------------------------------------
 
@@ -112,7 +119,7 @@ CREATE TABLE `siswa` (
 --
 
 INSERT INTO `siswa` (`id`, `nisn`, `nama`, `kelas`, `absen`, `tanggal_lahir`, `status`, `foto`) VALUES
-(170, '11928', 'Andi', 'XII TKJ 1', 1, '2005-04-11', 'Lulus', '68353907518fb.jpg'),
+(170, '11928', 'Ardianto', 'XII TKJ 1', 1, '2008-11-05', 'Lulus', '68355cd48a637.jpg'),
 (171, '11929', 'Bella', 'XII TKJ 1', 2, '2005-09-18', 'Tidak Lulus', 'siswa/68342a88396b8.jpg'),
 (172, '11930', 'Cahya', 'XII TKJ 1', 3, '2005-04-25', 'Tidak Lulus', 'siswa/68342a883ab8d.jpg'),
 (173, '11931', 'Dian', 'XII TKJ 1', 4, '2005-12-05', 'Lulus', 'siswa/68342a883b5f9.jpg'),
@@ -163,7 +170,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `riwayat_login`
 --
 ALTER TABLE `riwayat_login`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `settings`
