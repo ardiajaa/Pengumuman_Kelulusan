@@ -41,10 +41,34 @@ $settings = $settings ?? [];
                 z-index: -1;">
     </div>
 
-    <audio id="background-music" autoplay loop>
-        <source src="/assets/mp3/17.mp3" type="audio/mpeg">
+    <audio id="background-music" loop>
+        <source src="/assets/mp3/<?= htmlspecialchars($settings['background_sound'] ?? 'sound.mp3') ?>" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
     </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const musicEnabled = localStorage.getItem('musicEnabled');
+            const audio = document.getElementById('background-music');
+            
+            if (musicEnabled === 'true') {
+                // Ambil posisi musik terakhir
+                const savedPosition = localStorage.getItem('musicPosition');
+                if (savedPosition) {
+                    audio.currentTime = parseFloat(savedPosition);
+                }
+                // Lanjutkan pemutaran musik
+                audio.play();
+                
+                // Update posisi musik setiap detik
+                setInterval(() => {
+                    if (!audio.paused) {
+                        localStorage.setItem('musicPosition', audio.currentTime);
+                    }
+                }, 1000);
+            }
+        });
+    </script>
 
     <div id="main" class="main">
         <div id="main-background" class="main-background" style="opacity: 1;"></div>
@@ -153,12 +177,6 @@ $settings = $settings ?? [];
     </div>
 
     <script src="assets/js/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var audio = document.getElementById('background-music');
-            audio.play();
-        });
-    </script>
 </body>
 
 </html>

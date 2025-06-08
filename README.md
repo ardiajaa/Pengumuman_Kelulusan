@@ -49,8 +49,14 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
     * Tanggal kelulusan
     * Link website sekolah
     * Background website (upload gambar)
+    * Background music (audio upload)
+      - Support for MP3 and WAV formats
+      - Real-time audio preview
+      - Automatic file management
+      - Background music control in public interface
   - Validasi file upload (format, ukuran)
   - Preview gambar sebelum upload
+  - Preview audio sebelum upload
 
 * **Profil Admin**
   - Update profil (nama, email)
@@ -78,6 +84,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * Informasi sekolah otomatis dari database
 * Validasi input NISN
 * Tampilan hasil kelulusan dengan animasi
+* Kontrol musik latar belakang dengan user preference storage
 
 ## Struktur File Penting
 
@@ -108,6 +115,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
   - `css/`: Stylesheet (Tailwind, custom)
   - `js/`: JavaScript (Particles.js, custom)
   - `images/`: Gambar (logo, background)
+  - `mp3/`: Audio files (background music)
   - `uploads/`: File upload (logo, background)
 
 ## Teknologi yang Digunakan
@@ -120,6 +128,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * IP Geolocation API (ipinfo.io)
 * User Agent Parsing
 * File Upload Handling
+* Audio File Management
 
 ### Frontend
 * HTML5
@@ -132,6 +141,7 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * Modern UI/UX Design
 * Responsive Layout
 * Interactive Animations
+* Audio Player Integration
 
 ## Instalasi & Konfigurasi
 
@@ -200,3 +210,4 @@ Aplikasi web komprehensif untuk mengelola dan menampilkan status kelulusan siswa
 * Validasi file upload
 * CSRF protection
 * XSS prevention
+* Kontrol musik latar belakang dengan user preference storage

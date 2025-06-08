@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $background = $settings['background_image'] ?? 'default-bg.jpg';
+    $background_sound = $settings['background_sound'] ?? 'sound.mp3';
 
     if (!empty($_FILES['background_image']['name'])) {
         $target_dir = "../assets/images/backgrounds/";
@@ -62,17 +63,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    if (!empty($_FILES['background_sound']['name'])) {
+        $target_dir = "../assets/mp3/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+
+        $target_file = $target_dir . basename($_FILES['background_sound']['name']);
+        $audioFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        // Cek apakah file adalah audio
+        if ($audioFileType == "mp3" || $audioFileType == "wav") {
+            if (!empty($background_sound) && $background_sound != 'sound.mp3' && file_exists($target_dir . $background_sound)) {
+                unlink($target_dir . $background_sound);
+            }
+
+            $new_sound_name = 'sound-' . time() . '.' . $audioFileType;
+            if (move_uploaded_file($_FILES['background_sound']['tmp_name'], $target_dir . $new_sound_name)) {
+                $background_sound = $new_sound_name;
+            }
+        }
+    }
+
     $sql = "UPDATE settings SET 
             nama_sekolah = ?, 
             logo = ?, 
             tahun_kelulusan = ?, 
             tanggal_kelulusan = ?,
             link_sekolah = ?,
-            background_image = ? 
+            background_image = ?,
+            background_sound = ? 
             WHERE id = 1";
 
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssssss", $nama_sekolah, $logo, $tahun_kelulusan, $tanggal_kelulusan, $link_sekolah, $background);
+    mysqli_stmt_bind_param($stmt, "sssssss", $nama_sekolah, $logo, $tahun_kelulusan, $tanggal_kelulusan, $link_sekolah, $background, $background_sound);
 
     if (mysqli_stmt_execute($stmt)) {
         header("Location: settings.php?success=1");
@@ -93,6 +117,7 @@ $settings['tahun_kelulusan'] = $settings['tahun_kelulusan'] ?? '';
 $settings['tanggal_kelulusan'] = date('Y-m-d\TH:i', strtotime($settings['tanggal_kelulusan'] ?? date('Y-m-d H:i:s', strtotime('+1 day'))));
 $settings['link_sekolah'] = $settings['link_sekolah'] ?? '';
 $settings['background_image'] = $settings['background_image'] ?? 'default-bg.jpg';
+$settings['background_sound'] = $settings['background_sound'] ?? 'sound.mp3';
 
 
 ?>
@@ -220,6 +245,27 @@ $settings['background_image'] = $settings['background_image'] ?? 'default-bg.jpg
                 </div>
 
                 <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Background Sound</label>
+                    <div class="sound-upload p-4 bg-gray-50 rounded-lg transition-all">
+                        <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                            <div class="w-full md:w-1/2">
+                                <audio controls class="w-full">
+                                    <source src="../assets/mp3/<?= htmlspecialchars($settings['background_sound']) ?>" type="audio/mpeg">
+                                    Browser Anda tidak mendukung elemen audio.
+                                </audio>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-700 mb-2">Pilih file audio baru:</p>
+                                <input type="file" id="background_sound" name="background_sound" accept="audio/*"
+                                    class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <input type="hidden" name="existing_sound" value="<?= htmlspecialchars($settings['background_sound']) ?>">
+                                <p class="text-xs text-gray-500 mt-2">Format: MP3, WAV. Maksimal 5MB.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
                     <label for="tahun_kelulusan" class="block text-sm font-medium text-gray-700">Tahun Kelulusan</label>
                     <input type="text" id="tahun_kelulusan" name="tahun_kelulusan"
                         value="<?= htmlspecialchars($settings['tahun_kelulusan']) ?>"
@@ -282,6 +328,18 @@ $settings['background_image'] = $settings['background_image'] ?? 'default-bg.jpg
                 }
                 reader.readAsDataURL(file);
             } else {
+            }
+        });
+
+        // Tambahkan event listener untuk background sound
+        document.getElementById('background_sound').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const audio = document.querySelector('.sound-upload audio');
+                const source = audio.querySelector('source');
+                const url = URL.createObjectURL(file);
+                source.src = url;
+                audio.load(); // Reload audio element
             }
         });
     </script>
