@@ -1412,6 +1412,236 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                 font-size: 1.2rem;
             }
         }
+
+        /* Animasi Pengumuman */
+        .announcement-banner {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            color: #008acf;
+            padding: 25px 45px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2),
+                        0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 95%;
+            border: 2px solid rgba(0, 138, 207, 0.15);
+            overflow: hidden;
+        }
+
+        .announcement-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 138, 207, 0.1), rgba(0, 163, 255, 0.1));
+            z-index: -1;
+        }
+
+        .announcement-banner.visible {
+            opacity: 1;
+            visibility: visible;
+            top: 30px;
+        }
+
+        .announcement-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .announcement-banner-icon {
+            background: linear-gradient(135deg, #008acf, #00a3ff);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .announcement-banner-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #008acf, #00a3ff);
+            animation: ripple 2s infinite;
+            z-index: -1;
+        }
+
+        .announcement-banner-icon i {
+            color: white;
+            font-size: 1.8rem;
+            animation: bellRing 2s infinite;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .announcement-banner-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .announcement-banner-title {
+            font-weight: 800;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #008acf, #00a3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .announcement-banner-subtitle {
+            font-size: 1rem;
+            color: #555;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 138, 207, 0.6);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(0, 138, 207, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 138, 207, 0);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes bellRing {
+            0% { transform: rotate(0); }
+            1% { transform: rotate(30deg); }
+            3% { transform: rotate(-28deg); }
+            5% { transform: rotate(34deg); }
+            7% { transform: rotate(-32deg); }
+            9% { transform: rotate(30deg); }
+            11% { transform: rotate(-28deg); }
+            13% { transform: rotate(26deg); }
+            15% { transform: rotate(-24deg); }
+            17% { transform: rotate(22deg); }
+            19% { transform: rotate(-20deg); }
+            21% { transform: rotate(18deg); }
+            23% { transform: rotate(-16deg); }
+            25% { transform: rotate(14deg); }
+            27% { transform: rotate(-12deg); }
+            29% { transform: rotate(10deg); }
+            31% { transform: rotate(-8deg); }
+            33% { transform: rotate(6deg); }
+            35% { transform: rotate(-4deg); }
+            37% { transform: rotate(2deg); }
+            39% { transform: rotate(-1deg); }
+            41% { transform: rotate(1deg); }
+            43% { transform: rotate(0); }
+            100% { transform: rotate(0); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .announcement-banner {
+                padding: 20px 30px;
+                width: 90%;
+            }
+
+            .announcement-banner-icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .announcement-banner-icon i {
+                font-size: 1.5rem;
+            }
+
+            .announcement-banner-title {
+                font-size: 1.2rem;
+            }
+
+            .announcement-banner-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .announcement-banner {
+                padding: 15px 20px;
+                width: 85%;
+            }
+
+            .announcement-banner-content {
+                gap: 15px;
+            }
+
+            .announcement-banner-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .announcement-banner-icon i {
+                font-size: 1.3rem;
+            }
+
+            .announcement-banner-title {
+                font-size: 1.1rem;
+            }
+
+            .announcement-banner-subtitle {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .announcement-banner {
+                padding: 12px 15px;
+                width: 90%;
+            }
+
+            .announcement-banner-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .announcement-banner-icon i {
+                font-size: 1.2rem;
+            }
+
+            .announcement-banner-title {
+                font-size: 1rem;
+            }
+
+            .announcement-banner-subtitle {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 
@@ -1564,6 +1794,20 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         Browser Anda tidak mendukung elemen audio.
     </audio>
 
+    <!-- Tambahkan div untuk banner pengumuman -->
+    <div class="announcement-banner" id="announcementBanner">
+        <div class="announcement-banner-content">
+            <div class="announcement-banner-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="announcement-banner-text">
+                <div class="announcement-banner-title">Pengumuman Kelulusan Telah Dibuka!</div>
+                <div class="announcement-banner-subtitle">Silakan masukkan NISN Anda untuk melihat hasil kelulusan</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         function updateCountdown() {
             const countdown = document.getElementById('countdown-timer');
@@ -1615,6 +1859,10 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
         }
 
         function showLoadingScreen() {
+            // Cek apakah ini adalah navigasi back
+            if (sessionStorage.getItem('isBackNavigation')) {
+                return; // Jangan tampilkan loading screen jika ini adalah navigasi back
+            }
             const loadingScreen = document.getElementById('loading-screen');
             loadingScreen.classList.add('visible');
         }
@@ -1630,6 +1878,20 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             if (document.getElementById('countdown-timer')) {
                 window.countdownInterval = setInterval(updateCountdown, 1000);
             }
+
+            // Set flag untuk navigasi back
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    sessionStorage.setItem('isBackNavigation', 'true');
+                    hideLoadingScreen();
+                } else {
+                    sessionStorage.removeItem('isBackNavigation');
+                    // Tampilkan loading screen hanya jika bukan navigasi back
+                    setTimeout(() => {
+                        hideLoadingScreen();
+                    }, 3000);
+                }
+            });
 
             const graduationForm = document.getElementById('graduation-form');
             const loadingScreen = document.getElementById('loading-screen');
@@ -1676,6 +1938,13 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
                     });
                 });
             }
+
+            // Cek apakah pengumuman sudah dibuka
+            const countdownTimer = document.getElementById('countdown-timer');
+            if (!countdownTimer) {
+                showConfetti();
+                showAnnouncementBanner();
+            }
         });
 
         // Tutup modal ketika klik di luar modal
@@ -1686,12 +1955,49 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             }
         }
 
-        // Fungsi untuk menampilkan modal musik
-        function showMusicModal() {
-            const modal = document.getElementById('musicModal');
-            modal.style.display = 'block';
-            modal.offsetHeight; // Trigger reflow
-            modal.classList.add('visible');
+        // Fungsi untuk menampilkan konfeti
+        function showConfetti() {
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Konfeti dari kiri
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } 
+                }));
+                
+                // Konfeti dari kanan
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } 
+                }));
+            }, 250);
+        }
+
+        // Fungsi untuk menampilkan banner pengumuman
+        function showAnnouncementBanner() {
+            const banner = document.getElementById('announcementBanner');
+            setTimeout(() => {
+                banner.classList.add('visible');
+                // Tambahkan timeout untuk menghilangkan banner setelah 5 detik
+                setTimeout(() => {
+                    banner.classList.remove('visible');
+                }, 5000);
+            }, 1000);
         }
 
         // Fungsi untuk menutup modal musik
@@ -1733,12 +2039,16 @@ $graduationDateISO = date('c', strtotime($tanggalKelulusan));
             // Cek apakah ini kunjungan pertama
             const hasVisited = localStorage.getItem('hasVisited');
             
-            if (!hasVisited) {
-                // Jika ini kunjungan pertama
+            // Cek apakah waktu pengumuman sudah dibuka
+            const countdownTimer = document.getElementById('countdown-timer');
+            const isAnnouncementOpen = !countdownTimer || countdownTimer.style.display === 'none';
+            
+            if (!hasVisited && isAnnouncementOpen) {
+                // Jika ini kunjungan pertama dan waktu pengumuman sudah dibuka
                 localStorage.setItem('hasVisited', 'true');
                 showMusicModal();
-            } else if (musicEnabled === 'true') {
-                // Jika bukan kunjungan pertama dan musik diaktifkan
+            } else if (musicEnabled === 'true' && isAnnouncementOpen) {
+                // Jika bukan kunjungan pertama, musik diaktifkan, dan waktu pengumuman sudah dibuka
                 const savedPosition = localStorage.getItem('musicPosition');
                 if (savedPosition) {
                     audio.currentTime = parseFloat(savedPosition);
